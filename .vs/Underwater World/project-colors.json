@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "6c50f389-553e-474e-8e0b-3c0017585cc7": {
+      "ProjectGuid": "6c50f389-553e-474e-8e0b-3c0017585cc7",
+      "DisplayName": "Underwater World",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}
