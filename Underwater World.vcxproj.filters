@@ -13,8 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Pliki zasobów\Shaders">
+    <Filter Include="Pliki zasobów\shaders">
       <UniqueIdentifier>{94303fe8-dee3-4b2b-9edb-933d4734acde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki zasobów\textures">
+      <UniqueIdentifier>{3c41ea22-de5e-4bdf-ad6c-cbc7cca9de79}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,13 +39,19 @@
     <ClCompile Include="VAO.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="stb.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.vert">
-      <Filter>Pliki zasobów\Shaders</Filter>
+      <Filter>Pliki zasobów\shaders</Filter>
     </None>
     <None Include="default.frag">
-      <Filter>Pliki zasobów\Shaders</Filter>
+      <Filter>Pliki zasobów\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -58,5 +67,13 @@
     <ClInclude Include="VAO.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="pop_cat.png">
+      <Filter>Pliki zasobów\textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>
