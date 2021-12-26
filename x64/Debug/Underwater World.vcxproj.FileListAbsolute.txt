@@ -1,2 +1,0 @@
-C:\Users\Tomasz Adamczyk\source\repos\Underwater World\x64\Debug\Underwater World.exe
-C:\Users\Tomasz Adamczyk\source\repos\Underwater World\underwater-world\x64\Debug\Underwater World.exe
