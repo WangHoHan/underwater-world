@@ -32,6 +32,6 @@
 *.app
 
 
-# Visual C++ cache files
-ipch/
-*.opendb
+# Visual C++
+.vs/
+x64/
