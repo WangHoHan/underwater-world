@@ -31,7 +31,16 @@ int main() {
 	GLfloat vertices[] = {
 		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
 		0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
-		0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f
+		0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,
+		-0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
+		0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
+		0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f
+	};
+
+	GLint indices[] = {
+		0, 3, 5,
+		3, 2, 4,
+		5, 4, 1
 	};
 
 	// creating window
@@ -75,12 +84,12 @@ int main() {
 	glDeleteShader(fragmentShader);
 
 	//create vertex array object and vertex buffer object
-	GLuint VAO, VBO;
+	GLuint VAO, VBO, EBO;
 
-	// generate VAO
+	// generate VAO, VBO, EBO
 	glGenVertexArrays(1, &VAO);
-	// generate VBO
 	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
 
 	// make VAO current vertex array object by binding it
 	glBindVertexArray(VAO);
@@ -89,6 +98,9 @@ int main() {
 
 	// introduce vertices to VBO
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// configure vertex attribute so the OpenGL knows how to read VBO
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -99,6 +111,7 @@ int main() {
 	// bind both VBO and VAO to 0 so we don't modify the VAO and VBO we created
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	// specify window background color
 	glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
@@ -116,7 +129,7 @@ int main() {
 		// bind VAO so OpenGL knows to use it
 		glBindVertexArray(VAO);
 		// draw the triangle
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 		// taking care of all events like dragging window
 		glfwPollEvents();
@@ -124,6 +137,7 @@ int main() {
 
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 	glDeleteProgram(shaderProgram);
 
 	glfwDestroyWindow(window);
