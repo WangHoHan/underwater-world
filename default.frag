@@ -2,10 +2,10 @@
 
 out vec4 FragColor;
 
+in vec3 crntPos;
+in vec3 normal;
 in vec3 color;
 in vec2 texCoord;
-in vec3 normal;
-in vec3 crntPos;
 
 uniform sampler2D tex0;
 uniform sampler2D tex1;
