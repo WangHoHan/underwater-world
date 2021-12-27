@@ -10,6 +10,7 @@
 #include "VBO.h"
 #include "EBO.h"
 #include "Texture.h"
+#include "Camera.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 800
@@ -67,46 +68,21 @@ int main() {
 	VBO1.unbind();
 	EBO1.unbind();
 
-	GLuint uniId = glGetUniformLocation(shaderProgram.id, "scale");
-
 	Texture brick("brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	brick.texUnit(shaderProgram, "tex0", 0);
 
-	float rotation = 0.0f;
-	double prevTime = glfwGetTime();
-
 	glEnable(GL_DEPTH_TEST);
+
+	Camera camera(WINDOW_WIDTH, WINDOW_HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
 
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		shaderProgram.activate();
 
-		double crntTime = glfwGetTime();
+		camera.inputs(window);
+		camera.matrix(45.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
 
-		if (crntTime - prevTime >= 1 / 60) {
-			rotation += 0.5f;
-			prevTime = crntTime;
-		}
-
-		glm::mat4 model = glm::mat4(1.0f);
-		glm::mat4 view = glm::mat4(1.0f);
-		glm::mat4 proj = glm::mat4(1.0f);
-
-		model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
-		view = glm::translate(view, glm::vec3(0.0f, -0.5f, -2.0f));
-		proj = glm::perspective(glm::radians(45.0f), (float)(WINDOW_WIDTH / WINDOW_HEIGHT), 0.1f, 100.0f);
-
-		int modelLoc = glGetUniformLocation(shaderProgram.id, "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-		int viewLoc = glGetUniformLocation(shaderProgram.id, "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-		int projLoc = glGetUniformLocation(shaderProgram.id, "proj");
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
-
-		glUniform1f(uniId, 0.5f);
 		brick.bind();
 		VAO1.bind();
 		glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
