@@ -80,8 +80,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <ExternalIncludePath>C:\Users\Tomasz Adamczyk\source\repos\Underwater World\underwater-world\libraries\include;$(ExternalIncludePath)</ExternalIncludePath>
-    <LibraryPath>C:\Users\Tomasz Adamczyk\source\repos\Underwater World\underwater-world\libraries\lib;$(LibraryPath)</LibraryPath>
+    <ExternalIncludePath>C:\Users\User\Desktop\projekty\underwater-world\libraries\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>C:\Users\User\Desktop\projekty\underwater-world\libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
