@@ -75,5 +75,8 @@
     <Image Include="pop_cat.png">
       <Filter>Pliki zasobów\textures</Filter>
     </Image>
+    <Image Include="brick.png">
+      <Filter>Pliki zasobów\textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>
