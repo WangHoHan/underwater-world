@@ -56,6 +56,12 @@
     <None Include="default.frag">
       <Filter>Pliki zasobów\shaders</Filter>
     </None>
+    <None Include="light.frag">
+      <Filter>Pliki zasobów\shaders</Filter>
+    </None>
+    <None Include="light.vert">
+      <Filter>Pliki zasobów\shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
