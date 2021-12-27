@@ -35,4 +35,3 @@
 # Visual C++
 .vs/
 x64/
-*.vcxproj
