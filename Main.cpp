@@ -40,6 +40,17 @@ unsigned int skyboxIndices[] =
 	6, 2, 3
 };
 
+std::string facesCubemap[6] =
+{
+	"skybox/box_right.jpg",
+	"skybox/box_left.jpg",
+	"skybox/box_top.jpg",
+	"skybox/box_bottom.jpg",
+	"skybox/box_back.jpg",
+	"skybox/box_front.jpg",
+
+};
+
 
 int main() {
 	glfwInit();
@@ -61,70 +72,27 @@ int main() {
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	Shader shaderProgram("default.vert", "default.frag");
-	Shader skyboxShader("skybox.vert", "skybox.frag");
-
-	VAO _VAO;
-	_VAO.bind();
-
-	VBO _VBO(vertices, sizeof(vertices));
-	EBO _EBO(indices, sizeof(indices));
-
-	_VAO.linkAttrib(_VBO, 0, 3, GL_FLOAT, 11 * sizeof(float), (void*)0);
-	_VAO.linkAttrib(_VBO, 1, 3, GL_FLOAT, 11 * sizeof(float), (void*)(3 * sizeof(float)));
-	_VAO.linkAttrib(_VBO, 2, 2, GL_FLOAT, 11 * sizeof(float), (void*)(6 * sizeof(float)));
-	_VAO.linkAttrib(_VBO, 3, 3, GL_FLOAT, 11 * sizeof(float), (void*)(8 * sizeof(float)));
-
-	_VAO.unbind();
-	_VBO.unbind();
-	_EBO.unbind();
-
-	Shader lightShader("light.vert", "light.frag");
-
-	VAO lightVAO;
-	lightVAO.bind();
-
-	VBO lightVBO(lightVertices, sizeof(lightVertices));
-	EBO lightEBO(lightIndices, sizeof(lightIndices));
 
 	glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-	lightVAO.linkAttrib(lightVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-
-	lightVAO.unbind();
-	lightVBO.unbind();
-	lightEBO.unbind();
-
 	glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
 	glm::mat4 lightModel = glm::mat4(1.0f);
 	lightModel = glm::translate(lightModel, lightPos);
 
-	glm::vec3 pyramidPos = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::mat4 pyramidModel = glm::mat4(1.0f);
-	lightModel = glm::translate(pyramidModel, pyramidPos);
-
-	lightShader.activate();
-	glUniformMatrix4fv(glGetUniformLocation(lightShader.id, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
-	glUniform4f(glGetUniformLocation(lightShader.id, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	shaderProgram.activate();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.id, "model"), 1, GL_FALSE, glm::value_ptr(pyramidModel));
 	glUniform4f(glGetUniformLocation(shaderProgram.id, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	glUniform3f(glGetUniformLocation(shaderProgram.id, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+
+	Shader skyboxShader("skybox.vert", "skybox.frag");
 
 	skyboxShader.activate();
 	glUniform1i(glGetUniformLocation(skyboxShader.id, "skybox"), 0);
 	glEnable(GL_DEPTH_TEST);
 
-	std::string facesCubemap[6] =
-	{
-		"skybox/box_right.jpg",
-		"skybox/box_left.jpg",
-		"skybox/box_top.jpg",
-		"skybox/box_bottom.jpg",
-		"skybox/box_back.jpg",
-		"skybox/box_front.jpg",
+	glEnable(GL_DEPTH_TEST);
 
-	};
 	Camera camera(WINDOW_WIDTH, WINDOW_HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
+
+	Model model("models/stingray/scene.gltf");
 
 	unsigned int skyboxVAO, skyboxVBO, skyboxEBO;
 	glGenVertexArrays(1, &skyboxVAO);
@@ -180,9 +148,6 @@ int main() {
 		}
 	}
 
-
-	Model model("models/stingray/scene.gltf");
-
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -194,14 +159,7 @@ int main() {
 		glUniform3f(glGetUniformLocation(shaderProgram.id, "camPos"), camera.position.x, camera.position.y, camera.position.z);
 		camera.matrix(shaderProgram, "camMatrix");
 		glDepthFunc(GL_LEQUAL);
-
-		glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		model.draw(shaderProgram, camera);
-
-		lightShader.activate();
-		camera.matrix(lightShader, "camMatrix");
-		lightVAO.bind();
-		glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 
 		skyboxShader.activate();
 		glm::mat4 view = glm::mat4(1.0f);
@@ -228,10 +186,6 @@ int main() {
 
 	skyboxShader.del();
 	shaderProgram.del();
-	lightVAO.del();
-	lightVBO.del();
-	lightEBO.del();
-	lightShader.del();
 
 	glfwDestroyWindow(window);
 	glfwTerminate();

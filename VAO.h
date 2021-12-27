@@ -5,15 +5,15 @@
 #include "VBO.h"
 
 class VAO {
-	public:
-		GLuint id;
+public:
+	GLuint id;
 
-		VAO();
+	VAO();
 
-		void linkAttrib(VBO &VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void *offset);
-		void bind();
-		void unbind();
-		void del();
+	void linkAttrib(VBO& VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset);
+	void bind();
+	void unbind();
+	void del();
 };
 
 #endif
