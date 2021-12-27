@@ -90,5 +90,11 @@
     <Image Include="brick.png">
       <Filter>Pliki zasobów\textures</Filter>
     </Image>
+    <Image Include="planks.png">
+      <Filter>Pliki zasobów\textures</Filter>
+    </Image>
+    <Image Include="planksSpec.png">
+      <Filter>Pliki zasobów\textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>
