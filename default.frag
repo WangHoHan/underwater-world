@@ -50,7 +50,7 @@ vec4 directLight() {
 }
 
 
-
+// TODO - spot light nie dzia³a
 vec4 spotLight() {
 	float outerCone = 0.9f;
 	float innerCone = 0.95f;

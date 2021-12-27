@@ -150,6 +150,7 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -161,11 +162,14 @@
     <None Include="default.vert" />
     <None Include="light.frag" />
     <None Include="light.vert" />
+    <None Include="models\sword\scene.bin" />
+    <None Include="models\sword\scene.gltf" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="EBO.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="VAO.h" />
@@ -173,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="brick.png" />
+    <Image Include="models\sword\textures\Object001_mtl_baseColor.jpeg" />
     <Image Include="planks.png" />
     <Image Include="planksSpec.png" />
     <Image Include="pop_cat.png" />

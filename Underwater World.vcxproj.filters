@@ -19,6 +19,15 @@
     <Filter Include="Pliki zasobów\textures">
       <UniqueIdentifier>{3c41ea22-de5e-4bdf-ad6c-cbc7cca9de79}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pliki zasobów\models">
+      <UniqueIdentifier>{ba61df76-82a8-4638-95b5-9a2bcb5be8a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki zasobów\models\sword">
+      <UniqueIdentifier>{e6f0b547-0386-475f-aa91-325c70f7001a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki zasobów\models\sword\textures">
+      <UniqueIdentifier>{528aa5fd-1c35-429f-9bae-070a2593ad8f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -51,6 +60,9 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.vert">
@@ -64,6 +76,12 @@
     </None>
     <None Include="light.vert">
       <Filter>Pliki zasobów\shaders</Filter>
+    </None>
+    <None Include="models\sword\scene.bin">
+      <Filter>Pliki zasobów\models\sword</Filter>
+    </None>
+    <None Include="models\sword\scene.gltf">
+      <Filter>Pliki zasobów\models\sword</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -88,6 +106,9 @@
     <ClInclude Include="Mesh.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="pop_cat.png">
@@ -101,6 +122,9 @@
     </Image>
     <Image Include="planksSpec.png">
       <Filter>Pliki zasobów\textures</Filter>
+    </Image>
+    <Image Include="models\sword\textures\Object001_mtl_baseColor.jpeg">
+      <Filter>Pliki zasobów\models\sword\textures</Filter>
     </Image>
   </ItemGroup>
 </Project>
