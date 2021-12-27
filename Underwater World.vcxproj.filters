@@ -19,6 +19,9 @@
     <Filter Include="Pliki zasobów\textures">
       <UniqueIdentifier>{3c41ea22-de5e-4bdf-ad6c-cbc7cca9de79}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pliki zasobów\models">
+      <UniqueIdentifier>{ba61df76-82a8-4638-95b5-9a2bcb5be8a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -49,6 +52,9 @@
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
   </ItemGroup>
@@ -92,6 +98,9 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>

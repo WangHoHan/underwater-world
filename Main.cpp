@@ -1,58 +1,9 @@
-#include <iostream>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <stb/stb_image.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "Shader.h"
-#include "VAO.h"
-#include "VBO.h"
-#include "EBO.h"
-#include "Texture.h"
-#include "Camera.h"
+#include"Model.h"
 
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 800
 
-GLfloat vertices[] = {
-	-1.0f, 0.0f,  1.0f,		0.0f, 0.0f, 0.0f,		0.0f, 0.0f,		0.0f, 1.0f, 0.0f,
-	-1.0f, 0.0f, -1.0f,		0.0f, 0.0f, 0.0f,		0.0f, 1.0f,		0.0f, 1.0f, 0.0f,
-	 1.0f, 0.0f, -1.0f,		0.0f, 0.0f, 0.0f,		1.0f, 1.0f,		0.0f, 1.0f, 0.0f,
-	 1.0f, 0.0f,  1.0f,		0.0f, 0.0f, 0.0f,		1.0f, 0.0f,		0.0f, 1.0f, 0.0f
-};
-
-GLuint indices[] = {
-	0, 1, 2,
-	0, 2, 3
-};
-
-GLfloat lightVertices[] = {
-	-0.1f, 0.9f,  0.1f,
-	-0.1f, 0.9f, -0.1f,
-	 0.1f, 0.9f, -0.1f,
-	 0.1f, 0.9f,  0.1f,
-	-0.1f, 1.1f,  0.1f,
-	-0.1f, 1.1f, -0.1f,
-	 0.1f, 1.1f, -0.1f,
-	 0.1f, 1.1f,  0.1f
-};
-
-GLuint lightIndices[] = {
-	0, 1, 2,
-	0, 2, 3,
-	0, 4, 7,
-	0, 7, 3,
-	3, 7, 6,
-	3, 6, 2,
-	2, 6, 5,
-	2, 5, 1,
-	1, 5, 4,
-	1, 4, 0,
-	4, 5, 6,
-	4, 6, 7
-};
 
 float skyboxVertices[] =
 {
@@ -230,6 +181,8 @@ int main() {
 	}
 
 
+	Model model("models/stingray/scene.gltf");
+
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -243,6 +196,7 @@ int main() {
 		glDepthFunc(GL_LEQUAL);
 
 		glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		model.draw(shaderProgram, camera);
 
 		lightShader.activate();
 		camera.matrix(lightShader, "camMatrix");

@@ -8,7 +8,6 @@ class EBO {
 public:
 	GLuint id;
 
-	EBO(GLuint *indices, GLsizeiptr size);
 	EBO(std::vector<GLuint>& indices);
 
 	void bind();

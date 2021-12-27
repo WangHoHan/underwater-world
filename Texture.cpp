@@ -24,7 +24,6 @@ Texture::Texture(const char* image, const char* texType, GLuint slot)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-
 	if (numColCh == 4)
 		glTexImage2D
 		(
@@ -70,7 +69,6 @@ Texture::Texture(const char* image, const char* texType, GLuint slot)
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	stbi_image_free(bytes);
-
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
