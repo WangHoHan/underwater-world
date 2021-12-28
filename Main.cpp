@@ -96,9 +96,11 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
-	Camera camera(WINDOW_WIDTH, WINDOW_HEIGHT, glm::vec3(0.0f, 18.0f, 0.0f));
+	// 0.0f, 57.0f, 0.0f
+	Camera camera(WINDOW_WIDTH, WINDOW_HEIGHT, glm::vec3(0.0f, 52.0f, 0.0f));
 
-	Model model("models/stingray/scene.gltf", glm::vec3(5.0f, 0.0f, 0.0f), 1.0f);
+	// 20.0f, 5.0f, 0.0
+	Model model("models/stingray/scene.gltf", glm::vec3(5.0f, -50.0f, 0.0f), 1.0f);
 	Model ground("models/ground/scene.gltf", glm::vec3(0.0f, 0.0f, 0.0f), 25.0f);
 	Model trees("models/trees/scene.gltf", glm::vec3(0.0f, 0.0f, 0.0f), 25.0f);
 
@@ -161,7 +163,7 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		camera.inputs(window);
-		camera.updateMatrix(45.0f, 0.1f, 100.0f);
+		camera.updateMatrix(90.0f, 0.1f, 100.0f);
 
 		shaderProgram.activate();
 		glUniform3f(glGetUniformLocation(shaderProgram.id, "camPos"), camera.position.x, camera.position.y, camera.position.z);

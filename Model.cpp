@@ -105,7 +105,7 @@ void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix, glm::vec3 star
 	if (node.find("children") != node.end())
 	{
 		for (unsigned int i = 0; i < node["children"].size(); i++)
-			traverseNode(node["children"][i], matNextNode, startPosition, initScale);
+			traverseNode(node["children"][i], matNextNode, glm::vec3(0.0f, 0.0f, 0.0f), initScale);
 	}
 }
 
