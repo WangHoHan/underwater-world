@@ -10,7 +10,7 @@ using json = nlohmann::json;
 class Model
 {
 public:
-	Model(const char* file);
+	Model(const char* file, glm::vec3 startPosition, float initScale);
 
 	void draw(Shader& shader, Camera& camera);
 
@@ -30,7 +30,7 @@ private:
 
 	void loadMesh(unsigned int indMesh);
 
-	void traverseNode(unsigned int nextNode, glm::mat4 matrix = glm::mat4(1.0f));
+	void traverseNode(unsigned int nextNode, glm::mat4 matrix, glm::vec3 startPosition, float initScale);
 
 	std::vector<unsigned char> getData();
 	std::vector<float> getFloats(json accessor);

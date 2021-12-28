@@ -1,6 +1,6 @@
 #include"Model.h"
 
-Model::Model(const char* file)
+Model::Model(const char* file, glm::vec3 startPosition, float initScale)
 {
 	std::string text = getFileContents(file);
 	JSON = json::parse(text);
@@ -8,7 +8,7 @@ Model::Model(const char* file)
 	Model::file = file;
 	data = getData();
 
-	traverseNode(0);
+	traverseNode(0, glm::mat4(1.0f), startPosition, initScale);
 }
 
 void Model::draw(Shader& shader, Camera& camera)
@@ -40,11 +40,12 @@ void Model::loadMesh(unsigned int indMesh)
 	meshes.push_back(Mesh(vertices, indices, textures));
 }
 
-void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix)
+void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix, glm::vec3 startPosition, float initScale)
 {
 	json node = JSON["nodes"][nextNode];
 
-	glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f);
+	//glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 translation = startPosition;
 	if (node.find("translation") != node.end())
 	{
 		float transValues[3];
@@ -83,7 +84,7 @@ void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix)
 
 	glm::mat4 trans = glm::mat4(1.0f);
 	glm::mat4 rot = glm::mat4(1.0f);
-	glm::mat4 sca = glm::mat4(1.0f);
+	glm::mat4 sca = glm::mat4(initScale);
 
 	trans = glm::translate(trans, translation);
 	rot = glm::mat4_cast(rotation);
@@ -104,7 +105,7 @@ void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix)
 	if (node.find("children") != node.end())
 	{
 		for (unsigned int i = 0; i < node["children"].size(); i++)
-			traverseNode(node["children"][i], matNextNode);
+			traverseNode(node["children"][i], matNextNode, startPosition, initScale);
 	}
 }
 

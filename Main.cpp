@@ -42,12 +42,12 @@ unsigned int skyboxIndices[] =
 
 std::string facesCubemap[6] =
 {
-	"skybox/box_right.jpg",
-	"skybox/box_left.jpg",
-	"skybox/box_top.jpg",
-	"skybox/box_bottom.jpg",
-	"skybox/box_back.jpg",
-	"skybox/box_front.jpg",
+	"skybox/blue.jpg",
+	"skybox/blue.jpg",
+	"skybox/blue.jpg",
+	"skybox/blue.jpg",
+	"skybox/blue.jpg",
+	"skybox/blue.jpg",
 
 };
 
@@ -96,11 +96,11 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
-	Camera camera(WINDOW_WIDTH, WINDOW_HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
+	Camera camera(WINDOW_WIDTH, WINDOW_HEIGHT, glm::vec3(0.0f, 18.0f, 0.0f));
 
-	Model model("models/stingray/scene.gltf");
-	Model ground("models/ground/scene.gltf");
-	Model trees("models/trees/scene.gltf");
+	Model model("models/stingray/scene.gltf", glm::vec3(5.0f, 0.0f, 0.0f), 1.0f);
+	Model ground("models/ground/scene.gltf", glm::vec3(0.0f, 0.0f, 0.0f), 25.0f);
+	Model trees("models/trees/scene.gltf", glm::vec3(0.0f, 0.0f, 0.0f), 25.0f);
 
 	unsigned int skyboxVAO, skyboxVBO, skyboxEBO;
 	glGenVertexArrays(1, &skyboxVAO);
@@ -157,7 +157,7 @@ int main() {
 	}
 
 	while (!glfwWindowShouldClose(window)) {
-		glClearColor(0.85f, 0.85f, 0.90f, 1.0f);
+		glClearColor(0.219f, 0.407f, 0.658f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		camera.inputs(window);
@@ -184,7 +184,7 @@ int main() {
 		glUniformMatrix4fv(glGetUniformLocation(skyboxShader.id, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 
-		//glBindVertexArray(skyboxVAO); // uncomment to see skybox
+		glBindVertexArray(skyboxVAO); // uncomment to see skybox
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
