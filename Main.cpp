@@ -88,8 +88,6 @@ int main() {
 	glUniform1i(glGetUniformLocation(skyboxShader.id, "skybox"), 0);
 	glEnable(GL_DEPTH_TEST);
 
-	glEnable(GL_DEPTH_TEST);
-
 	Camera camera(WINDOW_WIDTH, WINDOW_HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
 
 	Model model("models/stingray/scene.gltf");
