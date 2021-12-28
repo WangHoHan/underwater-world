@@ -184,7 +184,7 @@ int main() {
 		glUniformMatrix4fv(glGetUniformLocation(skyboxShader.id, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 
-		glBindVertexArray(skyboxVAO);
+		//glBindVertexArray(skyboxVAO); // uncomment to see skybox
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
