@@ -77,6 +77,12 @@
     <None Include="skybox.frag">
       <Filter>Pliki zasobów\shaders</Filter>
     </None>
+    <None Include="terrain.vert">
+      <Filter>Pliki zasobów\shaders</Filter>
+    </None>
+    <None Include="terrain.frag">
+      <Filter>Pliki zasobów\shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">

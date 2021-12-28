@@ -86,11 +86,21 @@ int main() {
 
 	skyboxShader.activate();
 	glUniform1i(glGetUniformLocation(skyboxShader.id, "skybox"), 0);
+
+	Shader terrainShader("terrain.vert", "terrain.frag");
+
+	terrainShader.activate();
+	glUniform4f(glGetUniformLocation(terrainShader.id, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+	glUniform3f(glGetUniformLocation(terrainShader.id, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
 	Camera camera(WINDOW_WIDTH, WINDOW_HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
 
 	Model model("models/stingray/scene.gltf");
+	Model ground("models/ground/scene.gltf");
+	Model trees("models/trees/scene.gltf");
 
 	unsigned int skyboxVAO, skyboxVBO, skyboxEBO;
 	glGenVertexArrays(1, &skyboxVAO);
@@ -147,7 +157,7 @@ int main() {
 	}
 
 	while (!glfwWindowShouldClose(window)) {
-		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+		glClearColor(0.85f, 0.85f, 0.90f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		camera.inputs(window);
@@ -157,7 +167,12 @@ int main() {
 		glUniform3f(glGetUniformLocation(shaderProgram.id, "camPos"), camera.position.x, camera.position.y, camera.position.z);
 		camera.matrix(shaderProgram, "camMatrix");
 		glDepthFunc(GL_LEQUAL);
+
 		model.draw(shaderProgram, camera);
+
+		terrainShader.activate();
+		ground.draw(terrainShader, camera);
+		trees.draw(terrainShader, camera);
 
 		skyboxShader.activate();
 		glm::mat4 view = glm::mat4(1.0f);
@@ -181,7 +196,7 @@ int main() {
 		glfwPollEvents();
 	}
 
-
+	terrainShader.del();
 	skyboxShader.del();
 	shaderProgram.del();
 

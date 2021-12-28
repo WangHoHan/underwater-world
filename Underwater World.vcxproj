@@ -164,6 +164,8 @@
     <None Include="light.vert" />
     <None Include="skybox.frag" />
     <None Include="skybox.vert" />
+    <None Include="terrain.frag" />
+    <None Include="terrain.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
