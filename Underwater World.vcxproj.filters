@@ -83,6 +83,12 @@
     <None Include="terrain.frag">
       <Filter>Pliki zasobów\shaders</Filter>
     </None>
+    <None Include="bubble.vert">
+      <Filter>Pliki zasobów\shaders</Filter>
+    </None>
+    <None Include="bubble.frag">
+      <Filter>Pliki zasobów\shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">

@@ -1,3 +1,4 @@
+#include <random>
 #include"Model.h"
 
 
@@ -93,6 +94,12 @@ int main() {
 	glUniform4f(glGetUniformLocation(terrainShader.id, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	glUniform3f(glGetUniformLocation(terrainShader.id, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
+	Shader bubbleShader("bubble.vert", "bubble.frag");
+	bubbleShader.activate();
+	glUniform4f(glGetUniformLocation(bubbleShader.id, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+	glUniform3f(glGetUniformLocation(bubbleShader.id, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+
+
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
@@ -103,6 +110,11 @@ int main() {
 	Model model("models/stingray/scene.gltf", glm::vec3(5.0f, -50.0f, 0.0f), 1.0f);
 	Model ground("models/ground/scene.gltf", glm::vec3(0.0f, 0.0f, 0.0f), 25.0f);
 	Model trees("models/trees/scene.gltf", glm::vec3(0.0f, 0.0f, 0.0f), 25.0f);
+	std::vector<Model> bubbles;
+	for (int i = 0; i < 10; i++) {
+		Model bubble("models/bubble/scene.gltf", glm::vec3(rand() % 300 + (- 150), -50.0f, rand() % 300 + (-150)), 1.0f);
+		bubbles.push_back(bubble);
+	}
 
 	unsigned int skyboxVAO, skyboxVBO, skyboxEBO;
 	glGenVertexArrays(1, &skyboxVAO);
@@ -176,6 +188,12 @@ int main() {
 		ground.draw(terrainShader, camera);
 		trees.draw(terrainShader, camera);
 
+		bubbleShader.activate();
+
+		for (Model bubble : bubbles) {
+			bubble.draw(bubbleShader, camera);
+		}
+
 		skyboxShader.activate();
 		glm::mat4 view = glm::mat4(1.0f);
 		glm::mat4 projection = glm::mat4(1.0f);
@@ -198,6 +216,7 @@ int main() {
 		glfwPollEvents();
 	}
 
+	bubbleShader.del();
 	terrainShader.del();
 	skyboxShader.del();
 	shaderProgram.del();
