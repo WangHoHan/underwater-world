@@ -24,5 +24,5 @@ void main() {
 	normal = aNormal;
 	color = aColor;
 	texCoord = mat2(0.0, -1.0, 1.0, 0.0) * aTex;
-	gl_Position = camMatrix * vec4(crntPos, 1.0);
+	gl_Position = camMatrix * vec4(crntPos, 1.0); //tu siê p³aszczka zmienia
 }
