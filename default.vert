@@ -17,6 +17,7 @@ uniform mat4 model;
 uniform mat4 translation;
 uniform mat4 rotation;
 uniform mat4 scale;
+uniform vec3 camPos;
 
 
 void main() {
@@ -24,5 +25,5 @@ void main() {
 	normal = aNormal;
 	color = aColor;
 	texCoord = mat2(0.0, -1.0, 1.0, 0.0) * aTex;
-	gl_Position = camMatrix * vec4(crntPos, 1.0); //tu siê p³aszczka zmienia
+	gl_Position = camMatrix * vec4(crntPos.x + camPos.x, crntPos.y + camPos.y - 52.0f, crntPos.z + camPos.z, 1.0); //tu siê p³aszczka zmienia
 }
