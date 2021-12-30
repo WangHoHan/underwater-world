@@ -94,10 +94,10 @@ int main() {
 	glUniform4f(glGetUniformLocation(terrainShader.id, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	glUniform3f(glGetUniformLocation(terrainShader.id, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
-	//Shader bubbleShader("bubble.vert", "bubble.frag");
-	//bubbleShader.activate();
-	//glUniform4f(glGetUniformLocation(bubbleShader.id, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-	//glUniform3f(glGetUniformLocation(bubbleShader.id, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	Shader bubbleShader("bubble.vert", "bubble.frag");
+	bubbleShader.activate();
+	glUniform4f(glGetUniformLocation(bubbleShader.id, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+	glUniform3f(glGetUniformLocation(bubbleShader.id, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
 
 	glEnable(GL_DEPTH_TEST);
@@ -110,11 +110,11 @@ int main() {
 	Model model("models/stingray/scene.gltf", glm::vec3(5.0f, -50.0f, 0.0f), 1.0f);
 	Model ground("models/ground/scene.gltf", glm::vec3(0.0f, 0.0f, 0.0f), 25.0f);
 	Model trees("models/trees/scene.gltf", glm::vec3(0.0f, 0.0f, 0.0f), 25.0f);
-	//std::vector<Model> bubbles;
-	//for (int i = 0; i < 10; i++) {
-	//	Model bubble("models/bubble/scene.gltf", glm::vec3(rand() % 300 + (- 150), -50.0f, rand() % 300 + (-150)), 1.0f);
-	//	bubbles.push_back(bubble);
-	//}
+	std::vector<Model> bubbles;
+	for (int i = 0; i < 15; i++) {
+		Model bubble("models/bubble/scene.gltf", glm::vec3(rand() % 500 + (- 250), rand() % 100 + (-50), rand() % 500 + (-250)), 1.0f);
+		bubbles.push_back(bubble);
+	}
 
 	unsigned int skyboxVAO, skyboxVBO, skyboxEBO;
 	glGenVertexArrays(1, &skyboxVAO);
@@ -170,7 +170,12 @@ int main() {
 		}
 	}
 
+	float bubbleMove = 0.0f;
+
 	while (!glfwWindowShouldClose(window)) {
+		if (bubbleMove > 100.0f) {
+			bubbleMove = 0.0f;
+		}
 		glClearColor(0.219f, 0.407f, 0.658f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -188,11 +193,13 @@ int main() {
 		ground.draw(terrainShader, camera);
 		trees.draw(terrainShader, camera);
 
-		//bubbleShader.activate();
+		bubbleShader.activate();
 
-		//for (Model bubble : bubbles) {
-		//	bubble.draw(bubbleShader, camera);
-		//}
+		glUniform3f(glGetUniformLocation(bubbleShader.id, "move"), 0.0f, bubbleMove, 0.0f);
+
+		for (Model bubble : bubbles) {
+			bubble.draw(bubbleShader, camera);
+		}
 
 		skyboxShader.activate();
 		glm::mat4 view = glm::mat4(1.0f);
@@ -214,9 +221,10 @@ int main() {
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+		bubbleMove += 0.2f;
 	}
 
-	//bubbleShader.del();
+	bubbleShader.del();
 	terrainShader.del();
 	skyboxShader.del();
 	shaderProgram.del();
