@@ -18,7 +18,7 @@
 #include "Camera.h"
 #include "SOIL/stb_image_aug.h"
 
-GLuint skyboxProgram, skyboxBuffer, programColor, programTexture, textureStingray;
+GLuint skyboxProgram, skyboxBuffer, terrainProgram, programColor, programTexture, textureStingray, textureTerrain;
 
 unsigned int cubemapTexture, skyboxVAO;
 
@@ -36,6 +36,7 @@ glm::mat4 cameraMatrix, perspectiveMatrix;
 
 Core::Shader_Loader shaderLoader;
 Core::RenderContext stingrayContext;
+Core::RenderContext terrainContext;
 
 std::string facesCubemap = "models/skybox/blue.jpg";
 
@@ -219,6 +220,9 @@ void renderScene()
 	glm::mat4 stingrayModelMatrix = glm::translate(cameraPos + cameraDir) * glm::mat4_cast(glm::inverse(rotation)) * stingrayInitialTransformation;
 	
 	drawObjectTexture(stingrayContext, stingrayModelMatrix, textureStingray);
+
+	glUseProgram(terrainProgram);
+	drawObjectTexture(terrainContext, glm::translate(glm::vec3(0, 130, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(850.25f)), textureTerrain);
 	glutSwapBuffers();
 }
 
@@ -289,9 +293,12 @@ void init()
 	programColor = shaderLoader.CreateProgram((char*) "shaders/shader_color.vert", (char*) "shaders/shader_color.frag");
 	programTexture = shaderLoader.CreateProgram((char*) "shaders/shader_tex.vert", (char*) "shaders/shader_tex.frag");
 	skyboxProgram = shaderLoader.CreateProgram((char *) "shaders/skybox.vert", (char *) "shaders/skybox.frag");
+	terrainProgram = shaderLoader.CreateProgram((char *) "shaders/terrain.vert", (char *) "shaders/terrain.frag");
     loadCubemap();
 	loadModelToContext("models/Ray.obj", stingrayContext);
 	textureStingray = Core::LoadTexture("textures/Ray.png");
+	loadModelToContext("models/CalidiousDesert_obj.obj", terrainContext);
+	textureTerrain = Core::LoadTexture("textures/CalidiousDesert_diffuse.png");
 	initSkybox();
 }
 
@@ -300,6 +307,7 @@ void shutdown()
 	shaderLoader.DeleteProgram(programColor);
 	shaderLoader.DeleteProgram(programTexture);
 	shaderLoader.DeleteProgram(skyboxProgram);
+	shaderLoader.DeleteProgram(terrainProgram);
 }
 
 void idle()
