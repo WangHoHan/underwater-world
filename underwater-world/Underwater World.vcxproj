@@ -183,8 +183,6 @@
     <None Include="shaders\shader_tex.vert" />
     <None Include="shaders\skybox.frag" />
     <None Include="shaders\skybox.vert" />
-    <None Include="shaders\terrain.frag" />
-    <None Include="shaders\terrain.vert" />
     <None Include="zlib.dll" />
     <None Include="zlibd.dll" />
   </ItemGroup>
