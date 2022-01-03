@@ -1,7 +1,7 @@
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 800
 #define STB_IMAGE_IMPLEMENTATION
-#define SKYBOX_PARAMETER 50.0f
+#define SKYBOX_PARAMETER 2000.0f
 
 #include "glew.h"
 #include "freeglut.h"
@@ -39,8 +39,6 @@ Core::RenderContext stingrayContext;
 Core::RenderContext terrainContext;
 
 std::string facesCubemap = "models/skybox/blue.jpg";
-
-float skyboxBoundary = 49.5f;
 
 float skyboxVertices[] = {
 	-SKYBOX_PARAMETER,  SKYBOX_PARAMETER, -SKYBOX_PARAMETER,
@@ -86,11 +84,6 @@ float skyboxVertices[] = {
 	 SKYBOX_PARAMETER, -SKYBOX_PARAMETER,  SKYBOX_PARAMETER
 };
 
-bool isInSkybox(glm::vec3 nextPosition) {
-	return nextPosition.z > -skyboxBoundary && nextPosition.z < skyboxBoundary && nextPosition.y > -skyboxBoundary &&
-		nextPosition.y < skyboxBoundary && nextPosition.x < skyboxBoundary && nextPosition.x > -skyboxBoundary;
-}
-
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -110,27 +103,19 @@ void keyboard(unsigned char key, int x, int y)
 	case 'x': cursorDiff.z += angleSpeed; break;
 	case 'w':
 		nextPosition = cameraPos + (cameraDir * moveSpeed);
-		if (isInSkybox(nextPosition)) {
-			cameraPos = nextPosition;
-		}
+		cameraPos = nextPosition;
 		break;
 	case 's':
 		nextPosition = cameraPos - (cameraDir * moveSpeed);
-		if (isInSkybox(nextPosition)) {
-			cameraPos = nextPosition;
-		}
+		cameraPos = nextPosition;
 		break;
 	case 'd':
 		nextPosition = cameraPos + (cameraSide * moveSpeed);
-		if (isInSkybox(nextPosition)) {
-			cameraPos = nextPosition;
-		}
+		cameraPos = nextPosition;
 		break;
 	case 'a':
 		nextPosition = cameraPos - (cameraSide * moveSpeed);
-		if (isInSkybox(nextPosition)) {
-			cameraPos = nextPosition;
-		}
+		cameraPos = nextPosition;
 		break;
 	}
 }
@@ -203,7 +188,7 @@ void renderScene()
 {
 	cameraMatrix = createCameraMatrix();
 	perspectiveMatrix = Core::createPerspectiveMatrix();
-
+	glClearColor(0.219f, 0.407f, 0.658f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glUseProgram(skyboxProgram);
