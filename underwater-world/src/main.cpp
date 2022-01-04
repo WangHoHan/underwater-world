@@ -6,19 +6,19 @@
 #include "glew.h"
 #include "freeglut.h"
 #include "glm.hpp"
+#include "gtx/matrix_decompose.hpp"
 #include "ext.hpp"
 #include <iostream>
 #include <cctype>
 #include <cmath>
 #include <vector>
-
 #include "Shader_Loader.h"
 #include "Render_Utils.h"
 #include "Texture.h"
 #include "Camera.h"
 #include "SOIL/stb_image_aug.h"
 
-GLuint skyboxProgram, skyboxBuffer, terrainProgram, bubbleProgram, programColor, programTexture, textureStingray, textureTerrain, textureBubble;
+GLuint skyboxProgram, skyboxBuffer, terrainProgram, bubbleProgram, programColor, programTexture, programTexture2, textureStingray, textureTerrain, textureBubble;
 
 unsigned int cubemapTexture, skyboxVAO;
 
@@ -42,6 +42,16 @@ Core::RenderContext bubbleContext;
 std::string facesCubemap = "models/skybox/blue.jpg";
 
 std::vector<glm::vec3> bubblesPositions;
+std::vector<Core::Node> fish;
+
+std::vector<glm::vec3> keyPoints({
+glm::vec3(0.0f, 0.0f, 5.0f),
+glm::vec3(10.0f, 5.0f, 20.0f),
+glm::vec3(20.0f, 10.0f, 10.0f),
+glm::vec3(0.0f, 0.0f, 5.0f)
+	});
+
+std::vector<glm::quat> keyRotation;
 
 float skyboxVertices[] = {
 	-SKYBOX_PARAMETER,  SKYBOX_PARAMETER, -SKYBOX_PARAMETER,
@@ -187,8 +197,97 @@ void drawObjectTexture(Core::RenderContext context, glm::mat4 modelMatrix, GLuin
 	glUseProgram(0);
 }
 
+void drawObject(GLuint program, Core::RenderContext context, glm::mat4 modelMatrix)
+{
+	glm::mat4 transformation = perspectiveMatrix * cameraMatrix * modelMatrix;
+
+
+	glUniformMatrix4fv(glGetUniformLocation(program, "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
+	glUniformMatrix4fv(glGetUniformLocation(program, "transformation"), 1, GL_FALSE, (float*)&transformation);
+	context.render();
+}
+
+glm::mat4 animationMatrix(float time) {
+	float speed = 1.;
+	time = time * speed;
+	std::vector<float> distances;
+	float timeStep = 0;
+	for (int i = 0; i < keyPoints.size() - 1; i++) {
+		timeStep += (keyPoints[i] - keyPoints[i + 1]).length();
+		distances.push_back((keyPoints[i] - keyPoints[i + 1]).length());
+	}
+	time = fmod(time, timeStep);
+
+	//index of first keyPoint
+	int index = 0;
+
+	while (distances[index] <= time) {
+		time = time - distances[index];
+		index += 1;
+	}
+
+	//t coefitient between 0 and 1 for interpolation
+	float t = time / distances[index];
+
+	int size = keyPoints.size();
+	//replace with catmul rom	
+	//glm::vec3 pos = (keyPoints[std::max(0, index)] * t + keyPoints[std::min(size, index + 1)] * (1 - t));
+
+	glm::vec3 pos = glm::catmullRom(keyPoints[std::max(0, (index - 1) % size)], keyPoints[(index) % size], keyPoints[std::max(0, (index + 1) % size)], keyPoints[std::max(0, (index + 2) % size)], t);
+
+
+	//implement correct animation
+	//auto animationRotation = glm::quat(1, 0, 0, 0);
+	//auto animationRotation = glm::slerp(keyRotation[index - 1], keyRotation[index], t);
+
+	//auto a1 = keyRotation[index] * glm::exp(-(glm::log(glm::inverse(keyRotation[index]) * keyRotation[index - 1]) + glm::log(glm::inverse(keyRotation[index]) * keyRotation[index + 1])) * glm::quat(1 / 4, 1 / 4, 1 / 4, 1 / 4));
+	//auto a2 = keyRotation[index + 1] * glm::exp(-(glm::log(glm::inverse(keyRotation[index + 1]) * keyRotation[index]) + glm::log(glm::inverse(keyRotation[index + 1]) * keyRotation[index + 2])) * glm::quat(1 / 4, 1 / 4, 1 / 4, 1 / 4));
+	//auto animationRotation = glm::squad(keyRotation[index], keyRotation[index + 1], a1, a2, t);
+
+	int keyRotationSize = keyRotation.size();
+
+	auto a1 = keyRotation[index % keyRotationSize] * glm::exp(-(glm::log(glm::inverse(keyRotation[index % keyRotationSize]) * keyRotation[std::max(0, (index - 1) % keyRotationSize)]) + glm::log(glm::inverse(keyRotation[index % keyRotationSize]) * keyRotation[(index + 1) % keyRotationSize])) * glm::quat(1 / 4, 1 / 4, 1 / 4, 1 / 4));
+
+	auto a2 = keyRotation[(index + 1) % keyRotationSize] * glm::exp(-(glm::log(glm::inverse(keyRotation[(index + 1) % keyRotationSize]) * keyRotation[index % keyRotationSize]) + glm::log(glm::inverse(keyRotation[(index + 1) % keyRotationSize]) * keyRotation[(index + 2) % keyRotationSize])) * glm::quat(1 / 4, 1 / 4, 1 / 4, 1 / 4));
+
+	auto animationRotation = glm::squad(keyRotation[index % keyRotationSize], keyRotation[(index + 1) % keyRotationSize], a1, a2, t);
+
+	glm::mat4 result = glm::translate(pos) * glm::mat4_cast(animationRotation);
+
+
+	return result;
+
+}
+
+void renderRecursive(std::vector<Core::Node>& nodes) {
+	for (Core::Node node : nodes) {
+		if (node.renderContexts.size() == 0) {
+			continue;
+		}
+
+		glm::mat4 transformation = glm::mat4();
+		transformation = node.matrix;
+		Core::Node parentNode = node;
+		while (parentNode.parent != -1) {
+			parentNode = nodes[parentNode.parent];
+			transformation = parentNode.matrix * transformation;
+		}
+
+		// dodaj odwolania do nadrzednych zmiennych
+		for (Core::RenderContext context : node.renderContexts) {
+			auto program = context.material->program;
+			glUseProgram(program);
+			glUniform3f(glGetUniformLocation(program, "cameraPos"), cameraPos.x, cameraPos.y, cameraPos.z);
+			context.material->init_data();
+			drawObject(program, context, transformation);
+		}
+	}
+
+}
+
 void renderScene()
 {
+	float time = glutGet(GLUT_ELAPSED_TIME) / 1000.f;
 	cameraMatrix = createCameraMatrix();
 	perspectiveMatrix = Core::createPerspectiveMatrix();
 	glClearColor(0.219f, 0.407f, 0.658f, 1.0f);
@@ -217,7 +316,51 @@ void renderScene()
 		//drawObjectTexture(bubbleContext, glm::translate(glm::vec3(0, -3, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(0.01f)), textureBubble);
 		drawObjectTexture(bubbleContext, glm::translate(bubblesPositions[i]) * glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(0.01f)), textureBubble);
 	}
+	for (int i = 0; i < 30; i++) {
+		if (time > -10) {
+			fish[0].matrix = animationMatrix(time + 15);
+			renderRecursive(fish);
+			time -= 3;
+		}
+	}
 	glutSwapBuffers();
+}
+
+Core::Material* loadDiffuseMaterial(aiMaterial* material) {
+	aiString colorPath;
+	// use for loading textures
+
+	material->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0), colorPath);
+	if (colorPath == aiString("")) {
+		return nullptr;
+	}
+
+	Core::DiffuseMaterial* result = new Core::DiffuseMaterial();
+	result->texture = Core::LoadTexture(colorPath.C_Str());
+	result->program = programTexture2;
+	result->lightDir = lightDir;
+
+	return result;
+}
+
+void loadRecusive(const aiScene* scene, aiNode* node, std::vector<Core::Node>& nodes, std::vector<Core::Material*> materialsVector, int parentIndex) {
+	int index = nodes.size();
+	nodes.push_back(Core::Node());
+	nodes[index].parent = parentIndex;
+	nodes[index].matrix = Core::mat4_cast(node->mTransformation);
+	for (int i = 0; i < node->mNumMeshes; i++) {
+		Core::RenderContext context;
+		context.initFromAssimpMesh(scene->mMeshes[node->mMeshes[i]]);
+		context.material = materialsVector[scene->mMeshes[node->mMeshes[i]]->mMaterialIndex];
+		nodes[index].renderContexts.push_back(context);
+	}
+	for (int i = 0; i < node->mNumChildren; i++) {
+		loadRecusive(scene, node->mChildren[i], nodes, materialsVector, index);
+	}
+}
+void loadRecusive(const aiScene* scene, std::vector<Core::Node>& nodes, std::vector<Core::Material*> materialsVector) {
+
+	loadRecusive(scene, scene->mRootNode, nodes, materialsVector, -1);
 }
 
 void loadModelToContext(std::string path, Core::RenderContext& context)
@@ -281,11 +424,78 @@ void initSkybox()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 }
 
+void initModels() {
+	Assimp::Importer importer;
+	//replace to get more buildings, unrecomdnded
+	//const aiScene* scene = importer.ReadFile("models/blade-runner-style-cityscapes.fbx", aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
+	//const aiScene* scene = importer.ReadFile("models/city_small.fbx", aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
+	// check for errors
+	//if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
+	//{
+	//	std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
+	//	return;
+	//}
+
+
+
+
+	//std::vector<Core::Material*> materialsVector;
+
+	//for (int i = 0; i < scene->mNumMaterials; i++) {
+	//	materialsVector.push_back(loadDiffuseSpecularMaterial(scene->mMaterials[i]));
+	//}
+	//loadRecusive(scene, city, materialsVector);
+
+
+	const aiScene* scene = importer.ReadFile("models/flying_car.fbx", aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
+
+	std::vector<Core::Material*> materialsVector;
+
+	// check for errors
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
+	{
+		std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
+		return;
+	}
+	materialsVector.clear();
+
+	for (int i = 0; i < scene->mNumMaterials; i++) {
+		materialsVector.push_back(loadDiffuseMaterial(scene->mMaterials[i]));
+	}
+	loadRecusive(scene, fish, materialsVector);
+
+
+	//Recovering points from fbx
+	//const aiScene* points = importer.ReadFile("models/path.fbx", aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
+
+	//auto root = points->mRootNode;
+
+	//for (int i = 0; i < root->mNumChildren; i++) {
+	//	auto node = root->mChildren[i];
+	//	std::cout << "glm::vec3(" << node->mTransformation.a4 << "f, " << node->mTransformation.b4 << "f, " << node->mTransformation.c4 << "f), " << std::endl;
+	//	//std::cout << node->mName.C_Str() << std::endl;
+	//}
+}
+
+void initKeyRotation() {
+	glm::vec3 oldDirection = glm::vec3(0, 0, 1);
+	glm::quat oldRotationCamera = glm::quat(1, 0, 0, 0);
+	for (int i = 0; i < keyPoints.size() - 1; i++) {
+		glm::vec3 newDirection = glm::normalize(keyPoints[i + 1] - keyPoints[i]);
+		glm::quat rotation = glm::normalize(glm::rotationCamera(oldDirection, newDirection) * oldRotationCamera);
+		keyRotation.push_back(rotation);
+		oldDirection = newDirection;
+		oldRotationCamera = rotation;
+	}
+	keyRotation.push_back(glm::quat(1, 0, 0, 0));
+}
+
 void init()
 {
 	glEnable(GL_DEPTH_TEST);
 	programColor = shaderLoader.CreateProgram((char*) "shaders/shader_color.vert", (char*) "shaders/shader_color.frag");
 	programTexture = shaderLoader.CreateProgram((char*) "shaders/shader_tex.vert", (char*) "shaders/shader_tex.frag");
+	programTexture2 = shaderLoader.CreateProgram((char*) "shaders/shader_tex_2.vert", (char*) "shaders/shader_tex_2.frag");
 	skyboxProgram = shaderLoader.CreateProgram((char *) "shaders/skybox.vert", (char *) "shaders/skybox.frag");
     loadCubemap();
 	loadModelToContext("models/Ray.obj", stingrayContext);
@@ -298,12 +508,15 @@ void init()
 	for (int i = 0; i < 500; i++) {
 		bubblesPositions.push_back(glm::ballRand(float(20)));
 	}
+	initModels();
+	initKeyRotation();
 }
 
 void shutdown()
 {
 	shaderLoader.DeleteProgram(programColor);
 	shaderLoader.DeleteProgram(programTexture);
+	shaderLoader.DeleteProgram(programTexture2);
 	shaderLoader.DeleteProgram(skyboxProgram);
 	shaderLoader.DeleteProgram(terrainProgram);
 	shaderLoader.DeleteProgram(bubbleProgram);

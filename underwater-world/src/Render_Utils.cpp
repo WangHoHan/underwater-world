@@ -127,6 +127,31 @@ void Core::RenderContext::initFromAssimpMesh(aiMesh* mesh) {
 
 }
 
+void Core::DiffuseMaterial::init_data() {
+    glUniform3f(glGetUniformLocation(program, "lightDir"), lightDir.x, lightDir.y, lightDir.z);
+    Core::SetActiveTexture(texture, "color_texture", program, 0);
+}
+
+void Core::DiffuseSpecularMaterial::init_data() {
+    glUniform3f(glGetUniformLocation(program, "lightDir"), lightDir.x, lightDir.y, lightDir.z);
+    Core::SetActiveTexture(texture, "color_texture", program, 0);
+    Core::SetActiveTexture(textureSpecular, "specular_texture", program, 1);
+}
+
+void Core::RenderContext::render()
+{
+
+    glBindVertexArray(this->vertexArray);
+    glDrawElements(
+        GL_TRIANGLES,      // mode
+        this->size,    // count
+        GL_UNSIGNED_INT,   // type
+        (void*)0           // element array buffer offset
+    );
+    glBindVertexArray(0);
+}
+
+
 void Core::DrawVertexArray(const float * vertexArray, int numVertices, int elementSize )
 {
 	glVertexAttribPointer(0, elementSize, GL_FLOAT, false, 0, vertexArray);
@@ -166,4 +191,45 @@ void Core::DrawContext(Core::RenderContext& context)
 		(void*)0           // element array buffer offset
 	);
 	glBindVertexArray(0);
+}
+
+void Core::initRay(RayContext& rayContext) {
+    rayContext.size = 2;
+    glGenVertexArrays(1, &rayContext.vertexArray);
+    glBindVertexArray(rayContext.vertexArray);
+
+    glGenBuffers(1, &rayContext.vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, rayContext.vertexBuffer);
+
+    glBufferData(GL_ARRAY_BUFFER, 3 * 7 * 2 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)(0));
+    glBindVertexArray(0);
+}
+void Core::updateRayPos(RayContext& rayContext, std::vector<glm::vec3> ray) {
+    glBindVertexArray(rayContext.vertexArray);
+    std::vector<glm::vec3> keyPoints;
+    float offset = 4.f;
+    float scale = 0.2f;
+    float rayEnd = 50.f;
+    keyPoints.push_back(ray[0] + ray[1] * offset);
+    keyPoints.push_back(ray[0] + ray[1] * rayEnd);
+
+    keyPoints.push_back(ray[0] + ray[1] * offset + scale * glm::vec3(1.f, 1.f, 0.f));
+    keyPoints.push_back(ray[0] + ray[1] * offset - scale * glm::vec3(1.f, 1.f, 0.f));
+    keyPoints.push_back(ray[0] + ray[1] * offset + scale * glm::vec3(1.f, -1.f, 0.f));
+    keyPoints.push_back(ray[0] + ray[1] * offset - scale * glm::vec3(1.f, -1.f, 0.f));
+
+    keyPoints.push_back(ray[0] + ray[1] * offset + scale * glm::vec3(1.f, 1.f, 0.f));
+    keyPoints.push_back(ray[0] + ray[1] * rayEnd * scale);
+    keyPoints.push_back(ray[0] + ray[1] * offset - scale * glm::vec3(1.f, 1.f, 0.f));
+    keyPoints.push_back(ray[0] + ray[1] * rayEnd * scale);
+    keyPoints.push_back(ray[0] + ray[1] * offset + scale * glm::vec3(1.f, -1.f, 0.f));
+    keyPoints.push_back(ray[0] + ray[1] * rayEnd * scale);
+    keyPoints.push_back(ray[0] + ray[1] * offset - scale * glm::vec3(1.f, -1.f, 0.f));
+    keyPoints.push_back(ray[0] + ray[1] * rayEnd * scale);
+    glBindBuffer(GL_ARRAY_BUFFER, rayContext.vertexBuffer);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, keyPoints.size() * 3 * sizeof(float), &keyPoints[0]);
+    glBindVertexArray(0);
 }
