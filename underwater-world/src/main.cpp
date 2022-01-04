@@ -18,7 +18,7 @@
 #include "Camera.h"
 #include "SOIL/stb_image_aug.h"
 
-GLuint skyboxProgram, skyboxBuffer, terrainProgram, programColor, programTexture, textureStingray, textureTerrain;
+GLuint skyboxProgram, skyboxBuffer, terrainProgram, bubbleProgram, programColor, programTexture, textureStingray, textureTerrain, textureBubble;
 
 unsigned int cubemapTexture, skyboxVAO;
 
@@ -37,8 +37,11 @@ glm::mat4 cameraMatrix, perspectiveMatrix;
 Core::Shader_Loader shaderLoader;
 Core::RenderContext stingrayContext;
 Core::RenderContext terrainContext;
+Core::RenderContext bubbleContext;
 
 std::string facesCubemap = "models/skybox/blue.jpg";
+
+std::vector<glm::vec3> bubblesPositions;
 
 float skyboxVertices[] = {
 	-SKYBOX_PARAMETER,  SKYBOX_PARAMETER, -SKYBOX_PARAMETER,
@@ -206,6 +209,14 @@ void renderScene()
 	
 	drawObjectTexture(stingrayContext, stingrayModelMatrix, textureStingray);
 	drawObjectTexture(terrainContext, glm::translate(glm::vec3(0, 130, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(850.25f)), textureTerrain);
+	for (int i = 0; i < bubblesPositions.size(); i++) {
+		if (bubblesPositions[i].y > 10.0f) {
+			bubblesPositions[i] = glm::ballRand(float(20));
+		}
+		bubblesPositions[i].y += 0.005f;
+		//drawObjectTexture(bubbleContext, glm::translate(glm::vec3(0, -3, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(0.01f)), textureBubble);
+		drawObjectTexture(bubbleContext, glm::translate(bubblesPositions[i]) * glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(0.01f)), textureBubble);
+	}
 	glutSwapBuffers();
 }
 
@@ -281,7 +292,12 @@ void init()
 	textureStingray = Core::LoadTexture("textures/Ray.png");
 	loadModelToContext("models/CalidiousDesert_obj.obj", terrainContext);
 	textureTerrain = Core::LoadTexture("textures/CalidiousDesert_diffuse.png");
+	loadModelToContext("models/Oceans day.obj", bubbleContext);
+	textureBubble = Core::LoadTexture("textures/texgen_0.png");
 	initSkybox();
+	for (int i = 0; i < 500; i++) {
+		bubblesPositions.push_back(glm::ballRand(float(20)));
+	}
 }
 
 void shutdown()
@@ -290,6 +306,7 @@ void shutdown()
 	shaderLoader.DeleteProgram(programTexture);
 	shaderLoader.DeleteProgram(skyboxProgram);
 	shaderLoader.DeleteProgram(terrainProgram);
+	shaderLoader.DeleteProgram(bubbleProgram);
 }
 
 void idle()
