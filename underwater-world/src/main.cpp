@@ -9,6 +9,7 @@
 #include "gtx/matrix_decompose.hpp"
 #include "ext.hpp"
 #include <iostream>
+#include <time.h>
 #include <cctype>
 #include <cmath>
 #include <vector>
@@ -18,7 +19,7 @@
 #include "Camera.h"
 #include "SOIL/stb_image_aug.h"
 
-GLuint skyboxProgram, skyboxBuffer, terrainProgram, bubbleProgram, programColor, programTexture, programTexture2, textureStingray, textureTerrain, textureBubble, fishTexture, fish2Texture, fish3Texture;
+GLuint skyboxProgram, skyboxBuffer, terrainProgram, bubbleProgram, programColor, programTexture, programTexture2, textureStingray, textureTerrain, textureBubble, fishTexture, fish2Texture, fish3Texture, plantTexture;
 
 unsigned int cubemapTexture, skyboxVAO;
 
@@ -41,10 +42,12 @@ Core::RenderContext bubbleContext;
 Core::RenderContext fishContext;
 Core::RenderContext fish2Context;
 Core::RenderContext fish3Context;
+Core::RenderContext plantContext;
 
 std::string facesCubemap = "models/skybox/blue.jpg";
 
 std::vector<glm::vec3> bubblesPositions;
+std::vector<glm::vec3> plantsPositions;
 
 std::vector<glm::vec3> keyPointsFirstShoal({
 	glm::vec3(3.0f, 0.0f, 15.0f),
@@ -355,7 +358,7 @@ void renderScene()
 			bubblesPositions[i] = glm::ballRand(float(20));
 		}
 		bubblesPositions[i].y += 0.005f;
-		drawObjectTexture(bubbleContext, glm::translate(bubblesPositions[i]) * glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(0.01f)), textureBubble);
+		drawObjectTexture(bubbleContext, glm::translate(bubblesPositions[i]) * glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(0.02f)), textureBubble);
 	}
 
 	for (int i = 0; i < 30; i++) {
@@ -371,6 +374,11 @@ void renderScene()
 			time -= 3;
 		}
 	}
+
+	for (int i = 0; i < 500; i++) {
+		drawObjectTexture(plantContext, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(0.2f)), plantTexture);
+	}
+
 	glutSwapBuffers();
 }
 
@@ -497,6 +505,10 @@ void init()
 		bubblesPositions.push_back(glm::ballRand(float(20)));
 	}
 
+	for (int i = 0; i < 500; i++) {
+		plantsPositions.push_back(glm::vec3(rand() % 200 - 100, -7.65f, rand() % 200 - 100));
+	}
+
 	loadModelToContext("models/GoldFish.obj", fishContext);
 	fishTexture = Core::LoadTexture("textures/GoldFish.png");
 
@@ -505,6 +517,9 @@ void init()
 
 	loadModelToContext("models/fish3.obj", fish3Context);
 	fish3Texture = Core::LoadTexture("textures/fish3.jpeg");
+
+	loadModelToContext("models/LittlePlant.obj", plantContext);
+	plantTexture = Core::LoadTexture("textures/plant_colour.png");
 
 	initKeyRotation(keyPointsFirstShoal, keyRotationFirstShoal);
 	initKeyRotation(keyPointsSecondShoal, keyRotationSecondShoal);
@@ -529,6 +544,7 @@ void idle()
 
 int main(int argc, char** argv)
 {
+	srand(time(NULL));
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(200, 200);
