@@ -19,7 +19,7 @@
 #include "Camera.h"
 #include "SOIL/stb_image_aug.h"
 
-GLuint skyboxProgram, skyboxBuffer, terrainProgram, bubbleProgram, programColor, programTexture, programTexture2, textureStingray, textureTerrain, textureBubble, fishTexture, fish2Texture, fish3Texture, plantTexture;
+GLuint skyboxProgram, skyboxBuffer, terrainProgram, bubbleProgram, programColor, programTexture, programTexture2, textureStingray, textureTerrain, textureBubble, fishTexture, fish2Texture, fish3Texture, plantTexture, plant2Texture;
 
 unsigned int cubemapTexture, skyboxVAO;
 
@@ -43,6 +43,7 @@ Core::RenderContext fishContext;
 Core::RenderContext fish2Context;
 Core::RenderContext fish3Context;
 Core::RenderContext plantContext;
+Core::RenderContext plant2Context;
 
 //std::string facesCubemap = "models/skybox/blue.jpg";
 std::string facesCubemap[6] = {
@@ -383,8 +384,13 @@ void renderScene()
 		}
 	}
 
-	for (int i = 0; i < 500; i++) {
+	for (int i = 0; i < 250; i++) {
 		drawObjectTexture(plantContext, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(0.2f)), plantTexture);
+	}
+
+
+	for (int i = 250; i < 500; i++) {
+		drawObjectTexture(plant2Context, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(1.0f)), plant2Texture);
 	}
 
 	glutSwapBuffers();
@@ -513,8 +519,11 @@ void init()
 		bubblesPositions.push_back(glm::ballRand(float(20)));
 	}
 
-	for (int i = 0; i < 500; i++) {
+	for (int i = 0; i < 250; i++) {
 		plantsPositions.push_back(glm::vec3(rand() % 200 - 100, -7.65f, rand() % 200 - 100));
+	}
+	for (int i = 0; i < 250; i++) {
+		plantsPositions.push_back(glm::vec3(rand() % 200 - 100, -4.0f, rand() % 200 - 100));
 	}
 
 	loadModelToContext("models/GoldFish.obj", fishContext);
@@ -528,6 +537,9 @@ void init()
 
 	loadModelToContext("models/LittlePlant.obj", plantContext);
 	plantTexture = Core::LoadTexture("textures/plant_colour.png");
+
+	loadModelToContext("models/seaweed.obj", plant2Context);
+	plant2Texture = Core::LoadTexture("textures/seaweed.png");
 
 	initKeyRotation(keyPointsFirstShoal, keyRotationFirstShoal);
 	initKeyRotation(keyPointsSecondShoal, keyRotationSecondShoal);
