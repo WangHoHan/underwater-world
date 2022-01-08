@@ -22,11 +22,11 @@ float logisticDepth(float depth, float steepness, float offset)
 
 void main()
 {
-	float depth = logisticDepth(gl_FragCoord.z, 0.1f, 5.0f);
+	float depth = logisticDepth(gl_FragCoord.z, 0.1f, 3.0f);
 	vec2 modifiedTexCoord = vec2(interpTexCoord.x, 1.0 - interpTexCoord.y); // Poprawka dla tekstur Ziemi, ktore bez tego wyswietlaja sie 'do gory nogami'
 	vec3 color = texture2D(textureSampler, modifiedTexCoord).rgb;
 	vec3 normal = normalize(interpNormal);
 	float ambient = 0.2;
 	float diffuse = max(dot(normal, -lightDir), 0.1);
-	gl_FragColor = vec4(color * (ambient + (1-ambient) * diffuse * 0.6 ), 1.0) * (1.0f - depth) + vec4(depth * vec3(0.219f, 0.407f, 0.658f), 1.0f);;
+	gl_FragColor = vec4(color * (ambient + (1-ambient) * diffuse * 0.6 ), 1.0) * (1.0f - depth) + vec4(depth * vec3(0.0f, 0.109f, 0.447f), 1.0f);;
 }

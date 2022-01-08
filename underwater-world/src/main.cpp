@@ -1,7 +1,7 @@
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 800
 #define STB_IMAGE_IMPLEMENTATION
-#define SKYBOX_PARAMETER 2000.0f
+#define SKYBOX_PARAMETER 100.0f
 
 #include "glew.h"
 #include "freeglut.h"
@@ -44,7 +44,15 @@ Core::RenderContext fish2Context;
 Core::RenderContext fish3Context;
 Core::RenderContext plantContext;
 
-std::string facesCubemap = "models/skybox/blue.jpg";
+//std::string facesCubemap = "models/skybox/blue.jpg";
+std::string facesCubemap[6] = {
+	"models/skybox/right.jpg",
+	"models/skybox/left.jpg",
+	"models/skybox/top.jpg",
+	"models/skybox/bottom.jpg",
+	"models/skybox/front.jpg",
+	"models/skybox/back.jpg"
+};
 
 std::vector<glm::vec3> bubblesPositions;
 std::vector<glm::vec3> plantsPositions;
@@ -334,7 +342,7 @@ void renderScene()
 	float time = glutGet(GLUT_ELAPSED_TIME) / 1000.f;
 	cameraMatrix = createCameraMatrix();
 	perspectiveMatrix = Core::createPerspectiveMatrix();
-	glClearColor(0.219f, 0.407f, 0.658f, 1.0f);
+	glClearColor(0.0f, 0.109f, 0.447f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glUseProgram(skyboxProgram);
@@ -428,7 +436,7 @@ void loadCubemap()
 	int width, height, nrChannels;
 	for (unsigned int i = 0; i < 6; i++)
 	{
-		unsigned char* data = stbi_load(facesCubemap.c_str(), &width, &height, &nrChannels, STBI_rgb_alpha);
+		unsigned char* data = stbi_load(facesCubemap[i].c_str(), &width, &height, &nrChannels, STBI_rgb_alpha);
 		if (data)
 		{
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
@@ -439,7 +447,7 @@ void loadCubemap()
 		else
 		{
 			std::cout << stbi_failure_reason() << std::endl;
-			std::cout << "Cubemap tex failed to load at path: " << facesCubemap << std::endl;
+			std::cout << "Cubemap tex failed to load at path: " << facesCubemap[i] << std::endl;
 			stbi_image_free(data);
 		}
 	}
