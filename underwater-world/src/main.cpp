@@ -362,6 +362,8 @@ void renderScene()
 	drawObjectTexture(stingrayContext, stingrayModelMatrix, textureStingray);
 	drawObjectTexture(terrainContext, glm::translate(glm::vec3(0, 130, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(850.25f)), textureTerrain);
 	
+	glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
 	for (int i = 0; i < bubblesPositions.size(); i++) {
 		if (bubblesPositions[i].y > 10.0f) {
 			bubblesPositions[i] = glm::ballRand(float(20));
@@ -369,6 +371,8 @@ void renderScene()
 		bubblesPositions[i].y += 0.005f;
 		drawObjectTexture(bubbleContext, glm::translate(bubblesPositions[i]) * glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(0.02f)), textureBubble);
 	}
+
+	glDisable(GL_BLEND);
 
 	for (int i = 0; i < 30; i++) {
 		if (time > -10) {
@@ -514,6 +518,7 @@ void init()
 	textureTerrain = Core::LoadTexture("textures/CalidiousDesert_diffuse.png");
 
 	loadModelToContext("models/Oceans day.obj", bubbleContext);
+;
 	textureBubble = Core::LoadTexture("textures/texgen_0.png");
 	for (int i = 0; i < 1500; i++) {
 		bubblesPositions.push_back(glm::ballRand(float(20)));
