@@ -28,5 +28,6 @@ void main()
 	vec3 normal = normalize(interpNormal);
 	float ambient = 0.2;
 	float diffuse = max(dot(normal, -lightDir), 0.1);
-	gl_FragColor = vec4(color * (ambient + (1-ambient) * diffuse * 0.6 ), 1.0) * (1.0f - depth) + vec4(depth * vec3(0.0f, 0.109f, 0.447f), 1.0f);;
+	//gl_FragColor = vec4(color * (ambient + (1-ambient) * diffuse * 0.6 ), 1.0) * (1.0f - depth) + vec4(depth * vec3(0.0f, 0.109f, 0.447f), 1.0f);;
+	gl_FragColor = vec4(color * (ambient + (1-ambient) * diffuse * 0.6 ), 1.0) * (1.0f - depth) + vec4(depth * vec3(0.219f, 0.407f, 0.705f), 1.0f);;
 }

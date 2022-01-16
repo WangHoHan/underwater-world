@@ -47,11 +47,11 @@ Core::RenderContext plant2Context;
 
 //std::string facesCubemap = "models/skybox/blue.jpg";
 std::string facesCubemap[6] = {
-	"models/skybox/right.jpg",
-	"models/skybox/left.jpg",
-	"models/skybox/top.jpg",
-	"models/skybox/bottom.jpg",
-	"models/skybox/front.jpg",
+	"models/skybox/blue.jpg",
+	"models/skybox/blue.jpg",
+	"models/skybox/blue.jpg",
+	"models/skybox/blue.jpg",
+	"models/skybox/blue.jpg",
 	"models/skybox/back.jpg"
 };
 
@@ -343,7 +343,8 @@ void renderScene()
 	float time = glutGet(GLUT_ELAPSED_TIME) / 1000.f;
 	cameraMatrix = createCameraMatrix();
 	perspectiveMatrix = Core::createPerspectiveMatrix();
-	glClearColor(0.0f, 0.109f, 0.447f, 1.0f);
+	//glClearColor(0.0f, 0.109f, 0.447f, 1.0f);
+	glClearColor(0.219f, 0.407f, 0.705f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glUseProgram(skyboxProgram);
