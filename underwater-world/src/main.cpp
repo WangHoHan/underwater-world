@@ -19,7 +19,7 @@
 #include "Camera.h"
 #include "SOIL/stb_image_aug.h"
 
-GLuint skyboxProgram, skyboxBuffer, terrainProgram, bubbleProgram, programColor, programTexture, programTexture2, textureStingray, textureTerrain, textureBubble, fishTexture, fish2Texture, fish3Texture, plantTexture, plant2Texture;
+GLuint skyboxProgram, skyboxBuffer, terrainProgram, bubbleProgram, programColor, programTexture, programTexture2, textureStingray, textureTerrain, textureBubble, fishTexture, fish2Texture, fish3Texture, plantTexture, plant2Texture, plant3Texture;
 
 unsigned int cubemapTexture, skyboxVAO;
 
@@ -44,6 +44,7 @@ Core::RenderContext fish2Context;
 Core::RenderContext fish3Context;
 Core::RenderContext plantContext;
 Core::RenderContext plant2Context;
+Core::RenderContext plant3Context;
 
 //std::string facesCubemap = "models/skybox/blue.jpg";
 std::string facesCubemap[6] = {
@@ -52,7 +53,7 @@ std::string facesCubemap[6] = {
 	"models/skybox/blue.jpg",
 	"models/skybox/blue.jpg",
 	"models/skybox/blue.jpg",
-	"models/skybox/back.jpg"
+	"models/skybox/blue.jpg"
 };
 
 std::vector<glm::vec3> bubblesPositions;
@@ -366,8 +367,8 @@ void renderScene()
 	glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 	for (int i = 0; i < bubblesPositions.size(); i++) {
-		if (bubblesPositions[i].y > 10.0f) {
-			bubblesPositions[i] = glm::ballRand(float(20));
+		if (bubblesPositions[i].y > 15.0f) {
+			bubblesPositions[i] = glm::vec3(rand() % 200 - 100, rand() % 10, rand() % 200 - 100);
 		}
 		bubblesPositions[i].y += 0.005f;
 		drawObjectTexture(bubbleContext, glm::translate(bubblesPositions[i]) * glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(0.02f)), textureBubble);
@@ -390,12 +391,13 @@ void renderScene()
 	}
 
 	for (int i = 0; i < 250; i++) {
-		drawObjectTexture(plantContext, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(0.2f)), plantTexture);
-	}
-
-
-	for (int i = 250; i < 500; i++) {
-		drawObjectTexture(plant2Context, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(1.0f)), plant2Texture);
+		if (i % 3 == 0) {
+			drawObjectTexture(plantContext, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(0.2f)), plantTexture);
+		} else if (i % 3 == 1) {
+			drawObjectTexture(plant2Context, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(1.0f)), plant2Texture);
+		} else {
+			drawObjectTexture(plant3Context, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(1.0f)), plant3Texture);
+		}
 	}
 
 	glutSwapBuffers();
@@ -522,14 +524,11 @@ void init()
 ;
 	textureBubble = Core::LoadTexture("textures/texgen_0.png");
 	for (int i = 0; i < 1500; i++) {
-		bubblesPositions.push_back(glm::ballRand(float(20)));
+		bubblesPositions.push_back(glm::vec3(rand() % 200 - 100, rand() % 10, rand() % 200 - 100));
 	}
 
-	for (int i = 0; i < 250; i++) {
-		plantsPositions.push_back(glm::vec3(rand() % 200 - 100, -7.65f, rand() % 200 - 100));
-	}
-	for (int i = 0; i < 250; i++) {
-		plantsPositions.push_back(glm::vec3(rand() % 200 - 100, -4.0f, rand() % 200 - 100));
+	for (int i = 0; i < 1000; i++) {
+		plantsPositions.push_back(glm::vec3(rand() % 200 - 100, -3.65f, rand() % 200 - 100));
 	}
 
 	loadModelToContext("models/GoldFish.obj", fishContext);
@@ -541,11 +540,14 @@ void init()
 	loadModelToContext("models/fish3.obj", fish3Context);
 	fish3Texture = Core::LoadTexture("textures/fish3.jpeg");
 
-	loadModelToContext("models/LittlePlant.obj", plantContext);
-	plantTexture = Core::LoadTexture("textures/plant_colour.png");
+	loadModelToContext("models/Aloe_mittel_normal.obj", plantContext);
+	plantTexture = Core::LoadTexture("textures/Aloe_mittel.png");
 
-	loadModelToContext("models/seaweed.obj", plant2Context);
-	plant2Texture = Core::LoadTexture("textures/seaweed.png");
+	loadModelToContext("models/WustenAloe_mittel_Muster.obj", plant2Context);
+	plant2Texture = Core::LoadTexture("textures/WustenAloe_mittel_Muster.png");
+
+	loadModelToContext("models/LangeAloe.obj", plant3Context);
+	plant3Texture = Core::LoadTexture("textures/LangeAloe.png");
 
 	initKeyRotation(keyPointsFirstShoal, keyRotationFirstShoal);
 	initKeyRotation(keyPointsSecondShoal, keyRotationSecondShoal);
