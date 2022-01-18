@@ -19,7 +19,7 @@
 #include "Camera.h"
 #include "SOIL/stb_image_aug.h"
 
-GLuint skyboxProgram, skyboxBuffer, terrainProgram, bubbleProgram, programColor, programTexture, programTexture2, textureStingray, textureTerrain, textureBubble, fishTexture, fish2Texture, fish3Texture, plantTexture, plant2Texture, plant3Texture, rockTexture;
+GLuint skyboxProgram, skyboxBuffer, terrainProgram, bubbleProgram, programColor, programTexture, programTexture2, textureStingray, textureTerrain, textureBubble, fishTexture, fish2Texture, fish3Texture, plantTexture, plant2Texture, plant3Texture, rockTexture , normalTerrain, plantNormal, plant2Normal, plant3Normal, normalStingray, fishNormal, fish2Normal, fish3Normal, rockNormal;
 
 unsigned int cubemapTexture, skyboxVAO;
 
@@ -235,7 +235,7 @@ void drawObjectColor(Core::RenderContext context, glm::mat4 modelMatrix, glm::ve
 }
 
 
-void drawObjectTexture(Core::RenderContext context, glm::mat4 modelMatrix, GLuint textureId)
+void drawObjectTexture(Core::RenderContext context, glm::mat4 modelMatrix, GLuint textureId, GLuint normalId = -1)
 {
 	GLuint program = programTexture;
 
@@ -243,6 +243,9 @@ void drawObjectTexture(Core::RenderContext context, glm::mat4 modelMatrix, GLuin
 
 	glUniform3f(glGetUniformLocation(program, "lightDir"), lightDir.x, lightDir.y, lightDir.z);
 	Core::SetActiveTexture(textureId, "textureSampler", program, 0);
+	if (normalId != -1) {
+		Core::SetActiveTexture(normalId, "normalSampler", program, 1);
+	}
 
 	glm::mat4 transformation = perspectiveMatrix * cameraMatrix * modelMatrix;
 	glUniformMatrix4fv(glGetUniformLocation(program, "modelViewProjectionMatrix"), 1, GL_FALSE, (float*)&transformation);
@@ -355,8 +358,8 @@ void renderScene()
 	glm::mat4 stingrayInitialTransformation = glm::translate(glm::vec3(0, -0.5, -0.4)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(0.25f));
 	glm::mat4 stingrayModelMatrix = glm::translate(cameraPos + cameraDir) * glm::mat4_cast(glm::inverse(rotation)) * stingrayInitialTransformation;
 	
-	drawObjectTexture(stingrayContext, stingrayModelMatrix, textureStingray);
-	drawObjectTexture(terrainContext, glm::translate(glm::vec3(0, 130, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(850.25f)), textureTerrain);
+	drawObjectTexture(stingrayContext, stingrayModelMatrix, textureStingray, normalStingray);
+	drawObjectTexture(terrainContext, glm::translate(glm::vec3(0, 130, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(850.25f)), textureTerrain, normalTerrain);
 	
 	glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
@@ -378,41 +381,41 @@ void renderScene()
 	for (int i = 0; i < 30; i++) {
 		if (time > -10) {
 			glm::mat4 matrix = animationMatrix(time + 15, keyPointsFirstShoal, keyRotationFirstShoal);
-			drawObjectTexture(fishContext, matrix * glm::rotate(glm::radians(180.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)) * glm::rotate(glm::radians(270.0f), glm::vec3(0, 0, 1)), fishTexture);
-			drawObjectTexture(fishContext, matrix * glm::translate(change1) * glm::rotate(glm::radians(180.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)) * glm::rotate(glm::radians(270.0f), glm::vec3(0, 0, 1)), fishTexture);
-			drawObjectTexture(fishContext, matrix * glm::translate(change2) * glm::rotate(glm::radians(180.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)) * glm::rotate(glm::radians(270.0f), glm::vec3(0, 0, 1)), fishTexture);
-			drawObjectTexture(fishContext, matrix * glm::translate(change3) * glm::rotate(glm::radians(180.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)) * glm::rotate(glm::radians(270.0f), glm::vec3(0, 0, 1)), fishTexture);
-			drawObjectTexture(fishContext, matrix * glm::translate(change4) * glm::rotate(glm::radians(180.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)) * glm::rotate(glm::radians(270.0f), glm::vec3(0, 0, 1)), fishTexture);
+			drawObjectTexture(fishContext, matrix * glm::rotate(glm::radians(180.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)) * glm::rotate(glm::radians(270.0f), glm::vec3(0, 0, 1)), fishTexture, fishNormal);
+			drawObjectTexture(fishContext, matrix * glm::translate(change1) * glm::rotate(glm::radians(180.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)) * glm::rotate(glm::radians(270.0f), glm::vec3(0, 0, 1)), fishTexture, fishNormal);
+			drawObjectTexture(fishContext, matrix * glm::translate(change2) * glm::rotate(glm::radians(180.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)) * glm::rotate(glm::radians(270.0f), glm::vec3(0, 0, 1)), fishTexture, fishNormal);
+			drawObjectTexture(fishContext, matrix * glm::translate(change3) * glm::rotate(glm::radians(180.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)) * glm::rotate(glm::radians(270.0f), glm::vec3(0, 0, 1)), fishTexture, fishNormal);
+			drawObjectTexture(fishContext, matrix * glm::translate(change4) * glm::rotate(glm::radians(180.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)) * glm::rotate(glm::radians(270.0f), glm::vec3(0, 0, 1)), fishTexture, fishNormal);
 
 
 			matrix = animationMatrix(time + 15, keyPointsSecondShoal, keyRotationSecondShoal);
-			drawObjectTexture(fish2Context, matrix * glm::translate(change1) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(270.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(0.0f), glm::vec3(0, 0, 1)), fish2Texture);
-			drawObjectTexture(fish2Context, matrix * glm::translate(change2) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(270.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(0.0f), glm::vec3(0, 0, 1)), fish2Texture);
-			drawObjectTexture(fish2Context, matrix * glm::translate(change3) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(270.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(0.0f), glm::vec3(0, 0, 1)), fish2Texture);
-			drawObjectTexture(fish2Context, matrix * glm::translate(change4) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(270.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(0.0f), glm::vec3(0, 0, 1)), fish2Texture);
+			drawObjectTexture(fish2Context, matrix * glm::translate(change1) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(270.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(0.0f), glm::vec3(0, 0, 1)), fish2Texture, fish2Normal);
+			drawObjectTexture(fish2Context, matrix * glm::translate(change2) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(270.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(0.0f), glm::vec3(0, 0, 1)), fish2Texture, fish2Normal);
+			drawObjectTexture(fish2Context, matrix * glm::translate(change3) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(270.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(0.0f), glm::vec3(0, 0, 1)), fish2Texture, fish2Normal);
+			drawObjectTexture(fish2Context, matrix * glm::translate(change4) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(270.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(0.0f), glm::vec3(0, 0, 1)), fish2Texture, fish2Normal);
 
 			matrix = animationMatrix(time + 15, keyPointsThirdShoal, keyRotationThirdShoal);
-			drawObjectTexture(fish3Context, matrix * glm::translate(change1) * glm::rotate(glm::radians(1.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)), fish3Texture);
-			drawObjectTexture(fish3Context, matrix * glm::translate(change2) * glm::rotate(glm::radians(1.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)), fish3Texture);
-			drawObjectTexture(fish3Context, matrix * glm::translate(change3) * glm::rotate(glm::radians(1.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)), fish3Texture);
-			drawObjectTexture(fish3Context, matrix * glm::translate(change4) * glm::rotate(glm::radians(1.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)), fish3Texture);
+			drawObjectTexture(fish3Context, matrix * glm::translate(change1) * glm::rotate(glm::radians(1.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)), fish3Texture, fish3Normal);
+			drawObjectTexture(fish3Context, matrix * glm::translate(change2) * glm::rotate(glm::radians(1.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)), fish3Texture, fish3Normal);
+			drawObjectTexture(fish3Context, matrix * glm::translate(change3) * glm::rotate(glm::radians(1.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)), fish3Texture, fish3Normal);
+			drawObjectTexture(fish3Context, matrix * glm::translate(change4) * glm::rotate(glm::radians(1.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)), fish3Texture, fish3Normal);
 			time -= 3;
 		}
 	}
 
 	for (int i = 0; i < 250; i++) {
 		if (i % 3 == 0) {
-			drawObjectTexture(plantContext, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(0.2f)), plantTexture);
+			drawObjectTexture(plantContext, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(0.2f)), plantTexture , plantNormal);
 		} else if (i % 3 == 1) {
-			drawObjectTexture(plant2Context, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(1.0f)), plant2Texture);
+			drawObjectTexture(plant2Context, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(1.0f)), plant2Texture, plant2Normal);
 		} else {
-			drawObjectTexture(plant3Context, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(1.0f)), plant3Texture);
+			drawObjectTexture(plant3Context, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(1.0f)), plant3Texture, plant3Normal);
 		}
 	}
 
-	drawObjectTexture(rockContext, glm::translate(glm::vec3(1.0f, -5.0f, 1.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2.0f)), rockTexture);
-	drawObjectTexture(rockContext, glm::translate(glm::vec3(60.0f, -5.0f, 1.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2.0f)), rockTexture);
-	drawObjectTexture(rockContext, glm::translate(glm::vec3(1.0f, -5.0f, 60.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2.0f)), rockTexture);
+	drawObjectTexture(rockContext, glm::translate(glm::vec3(1.0f, -5.0f, 1.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2.0f)), rockTexture, rockNormal);
+	drawObjectTexture(rockContext, glm::translate(glm::vec3(60.0f, -5.0f, 1.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2.0f)), rockTexture, rockNormal);
+	drawObjectTexture(rockContext, glm::translate(glm::vec3(1.0f, -5.0f, 60.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2.0f)), rockTexture, rockNormal);
 
 	glutSwapBuffers();
 }
@@ -530,9 +533,11 @@ void init()
 
 	loadModelToContext("models/Ray.obj", stingrayContext);
 	textureStingray = Core::LoadTexture("textures/Ray.png");
+	normalStingray = Core::LoadTexture("textures/Ray_normal.png");
 
 	loadModelToContext("models/CalidiousDesert_obj.obj", terrainContext);
 	textureTerrain = Core::LoadTexture("textures/CalidiousDesert_diffuse.png");
+	normalTerrain = Core::LoadTexture("textures/CalidiousDesert_normal.png");
 
 	loadModelToContext("models/Oceans day.obj", bubbleContext);
 ;
@@ -547,24 +552,31 @@ void init()
 
 	loadModelToContext("models/GoldFish.obj", fishContext);
 	fishTexture = Core::LoadTexture("textures/GoldFish.png");
+	fishNormal = Core::LoadTexture("textures/GoldFish_normal.png");
 
 	loadModelToContext("models/fish.obj", fish2Context);
 	fish2Texture = Core::LoadTexture("textures/fish2.jpg");
+	fish2Normal = Core::LoadTexture("textures/fish2_normal.png");
 
 	loadModelToContext("models/fish3.obj", fish3Context);
 	fish3Texture = Core::LoadTexture("textures/fish3.jpeg");
+	fish3Normal = Core::LoadTexture("textures/fish3_normal.png");
 
 	loadModelToContext("models/Aloe_mittel_normal.obj", plantContext);
 	plantTexture = Core::LoadTexture("textures/Aloe_mittel.png");
+	plantNormal = Core::LoadTexture("textures/Aloe_mittel_normal.png");
 
 	loadModelToContext("models/WustenAloe_mittel_Muster.obj", plant2Context);
 	plant2Texture = Core::LoadTexture("textures/WustenAloe_mittel_Muster.png");
+	plant2Normal = Core::LoadTexture("textures/WustenAloe_mittel_Muster_normal.png");
 
 	loadModelToContext("models/LangeAloe.obj", plant3Context);
 	plant3Texture = Core::LoadTexture("textures/LangeAloe.png");
+	plant3Normal = Core::LoadTexture("textures/LangeAloe_normal.png");
 
 	loadModelToContext("models/rock.obj", rockContext);
-	rockTexture = Core::LoadTexture("textures/Rock_Albedo.tga.png");
+	rockTexture = Core::LoadTexture("textures/rock.png");
+	rockNormal = Core::LoadTexture("textures/rock_normal.png");
 
 	initKeyRotation(keyPointsFirstShoal, keyRotationFirstShoal);
 	initKeyRotation(keyPointsSecondShoal, keyRotationSecondShoal);
