@@ -5,7 +5,7 @@
 
 namespace Core
 {
-	glm::mat4 createPerspectiveMatrix(float zNear = 0.1f, float zFar = 200.0f);
+	glm::mat4 createPerspectiveMatrix(float zNear = 0.1f, float zFar = 300.0f);
 
 	// position - pozycja kamery
 	// forward - wektor "do przodu" kamery (jednostkowy)

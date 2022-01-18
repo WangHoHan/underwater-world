@@ -26,7 +26,7 @@ unsigned int cubemapTexture, skyboxVAO;
 float old_x, old_y = -1;
 glm::vec3 cursorDiff;
 glm::vec3 lightDir = glm::normalize(glm::vec3(1.0f, -10.f, -1.0f));
-glm::vec3 cameraPos = glm::vec3(0, 0, 5);
+glm::vec3 cameraPos = glm::vec3(0, 10, 5);
 glm::vec3 cameraDir; // Wektor "do przodu" kamery
 glm::vec3 cameraSide; // Wektor "w bok" kamery
 float cameraAngle = 0;
@@ -94,18 +94,12 @@ std::vector<glm::vec3> keyPointsSecondShoal({
 std::vector<glm::quat> keyRotationSecondShoal;
 
 std::vector<glm::vec3> keyPointsThirdShoal({
-	glm::vec3(3.0f, 0.0f, 15.0f),
-	glm::vec3(30.0f, 0.0f, 35.0f),
-	glm::vec3(55.0f, 0.0f, 75.0f),
+	glm::vec3(1.0f, 0.0f, 60.0f),
+	glm::vec3(10.0f, 0.0f, 65.0f),
+	glm::vec3(45.0f, 0.0f, 75.0f),
 	glm::vec3(55.0f, 0.0f, 150.0f),
-	glm::vec3(30.0f, 0.0f, 200.0f),
-	glm::vec3(0.0f, 0.0f, 200.0f),
-	glm::vec3(-15.0f, 0.0f, 150.0f),
-	glm::vec3(-15.0f, 0.0f, 100.0f),
-	glm::vec3(-15.0f, 0.0f, 50.0f),
-	glm::vec3(-15.0f, 0.0f, 0.0f),
-	glm::vec3(-15.0f, 0.0f, 100.0f),
-	glm::vec3(-15.0f, 0.0f, 150.0f),
+	glm::vec3(60.0f, 0.0f, 200.0f),
+	glm::vec3(65.0f, 0.0f, 200.0f),
 	});
 
 std::vector<glm::quat> keyRotationThirdShoal;
@@ -392,7 +386,7 @@ void renderScene()
 
 
 			matrix = animationMatrix(time + 15, keyPointsSecondShoal, keyRotationSecondShoal);
-			drawObjectTexture(fish2Context, matrix * glm::translate(change1) * glm::rotate(glm::radians(10.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(270.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(0.0f), glm::vec3(0, 0, 1)), fish2Texture);
+			drawObjectTexture(fish2Context, matrix * glm::translate(change1) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(270.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(0.0f), glm::vec3(0, 0, 1)), fish2Texture);
 			drawObjectTexture(fish2Context, matrix * glm::translate(change2) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(270.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(0.0f), glm::vec3(0, 0, 1)), fish2Texture);
 			drawObjectTexture(fish2Context, matrix * glm::translate(change3) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(270.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(0.0f), glm::vec3(0, 0, 1)), fish2Texture);
 			drawObjectTexture(fish2Context, matrix * glm::translate(change4) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(270.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(0.0f), glm::vec3(0, 0, 1)), fish2Texture);
@@ -418,7 +412,7 @@ void renderScene()
 
 	drawObjectTexture(rockContext, glm::translate(glm::vec3(1.0f, -5.0f, 1.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2.0f)), rockTexture);
 	drawObjectTexture(rockContext, glm::translate(glm::vec3(60.0f, -5.0f, 1.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2.0f)), rockTexture);
-	drawObjectTexture(rockContext, glm::translate(glm::vec3(1.0f, -5.0f, 60.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(1.0f)), rockTexture);
+	drawObjectTexture(rockContext, glm::translate(glm::vec3(1.0f, -5.0f, 60.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2.0f)), rockTexture);
 
 	glutSwapBuffers();
 }
