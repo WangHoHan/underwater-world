@@ -19,7 +19,7 @@
 #include "Camera.h"
 #include "SOIL/stb_image_aug.h"
 
-GLuint skyboxProgram, skyboxBuffer, terrainProgram, bubbleProgram, programColor, programTexture, programTexture2, textureStingray, textureTerrain, textureBubble, fishTexture, fish2Texture, fish3Texture, plantTexture, plant2Texture, plant3Texture;
+GLuint skyboxProgram, skyboxBuffer, terrainProgram, bubbleProgram, programColor, programTexture, programTexture2, textureStingray, textureTerrain, textureBubble, fishTexture, fish2Texture, fish3Texture, plantTexture, plant2Texture, plant3Texture, rockTexture;
 
 unsigned int cubemapTexture, skyboxVAO;
 
@@ -45,6 +45,7 @@ Core::RenderContext fish3Context;
 Core::RenderContext plantContext;
 Core::RenderContext plant2Context;
 Core::RenderContext plant3Context;
+Core::RenderContext rockContext;
 
 //std::string facesCubemap = "models/skybox/blue.jpg";
 std::string facesCubemap[6] = {
@@ -400,6 +401,10 @@ void renderScene()
 		}
 	}
 
+	drawObjectTexture(rockContext, glm::translate(glm::vec3(1.0f, -5.0f, 1.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(1.0f)), rockTexture);
+	drawObjectTexture(rockContext, glm::translate(glm::vec3(60.0f, -5.0f, 1.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(1.0f)), rockTexture);
+	drawObjectTexture(rockContext, glm::translate(glm::vec3(1.0f, -5.0f, 60.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(1.0f)), rockTexture);
+
 	glutSwapBuffers();
 }
 
@@ -548,6 +553,9 @@ void init()
 
 	loadModelToContext("models/LangeAloe.obj", plant3Context);
 	plant3Texture = Core::LoadTexture("textures/LangeAloe.png");
+
+	loadModelToContext("models/rock.obj", rockContext);
+	rockTexture = Core::LoadTexture("textures/Rock_Albedo.tga.png");
 
 	initKeyRotation(keyPointsFirstShoal, keyRotationFirstShoal);
 	initKeyRotation(keyPointsSecondShoal, keyRotationSecondShoal);
