@@ -48,12 +48,12 @@ Core::RenderContext plant3Context;
 
 //std::string facesCubemap = "models/skybox/blue.jpg";
 std::string facesCubemap[6] = {
-	"models/skybox/blue.jpg",
-	"models/skybox/blue.jpg",
-	"models/skybox/blue.jpg",
-	"models/skybox/blue.jpg",
-	"models/skybox/blue.jpg",
-	"models/skybox/blue.jpg"
+	"models/skybox/right.jpg",
+	"models/skybox/left.jpg",
+	"models/skybox/top.jpg",
+	"models/skybox/bottom.jpg",
+	"models/skybox/front.jpg",
+	"models/skybox/back.jpg"
 };
 
 std::vector<glm::vec3> bubblesPositions;
@@ -344,8 +344,8 @@ void renderScene()
 	float time = glutGet(GLUT_ELAPSED_TIME) / 1000.f;
 	cameraMatrix = createCameraMatrix();
 	perspectiveMatrix = Core::createPerspectiveMatrix();
-	//glClearColor(0.0f, 0.109f, 0.447f, 1.0f);
-	glClearColor(0.219f, 0.407f, 0.705f, 1.0f);
+	glClearColor(0.0f, 0.109f, 0.447f, 1.0f);
+	//glClearColor(0.219f, 0.407f, 0.705f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glUseProgram(skyboxProgram);
@@ -376,16 +376,32 @@ void renderScene()
 
 	glDisable(GL_BLEND);
 
+
+	glm::vec3  change1 = glm::vec3(0, 3, 0);
+	glm::vec3  change2 = glm::vec3(0, 0, 0);
+	glm::vec3  change3 = glm::vec3(3, 0, 0);
+	glm::vec3  change4 = glm::vec3(0, 2, 1);
 	for (int i = 0; i < 30; i++) {
 		if (time > -10) {
 			glm::mat4 matrix = animationMatrix(time + 15, keyPointsFirstShoal, keyRotationFirstShoal);
 			drawObjectTexture(fishContext, matrix * glm::rotate(glm::radians(180.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)) * glm::rotate(glm::radians(270.0f), glm::vec3(0, 0, 1)), fishTexture);
+			drawObjectTexture(fishContext, matrix * glm::translate(change1) * glm::rotate(glm::radians(180.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)) * glm::rotate(glm::radians(270.0f), glm::vec3(0, 0, 1)), fishTexture);
+			drawObjectTexture(fishContext, matrix * glm::translate(change2) * glm::rotate(glm::radians(180.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)) * glm::rotate(glm::radians(270.0f), glm::vec3(0, 0, 1)), fishTexture);
+			drawObjectTexture(fishContext, matrix * glm::translate(change3) * glm::rotate(glm::radians(180.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)) * glm::rotate(glm::radians(270.0f), glm::vec3(0, 0, 1)), fishTexture);
+			drawObjectTexture(fishContext, matrix * glm::translate(change4) * glm::rotate(glm::radians(180.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)) * glm::rotate(glm::radians(270.0f), glm::vec3(0, 0, 1)), fishTexture);
+
 
 			matrix = animationMatrix(time + 15, keyPointsSecondShoal, keyRotationSecondShoal);
-			drawObjectTexture(fish2Context, matrix * glm::rotate(glm::radians(30.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(1.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(1.0f), glm::vec3(0, 0, 1)), fish2Texture);
+			drawObjectTexture(fish2Context, matrix * glm::translate(change1) * glm::rotate(glm::radians(30.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(1.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(1.0f), glm::vec3(0, 0, 1)), fish2Texture);
+			drawObjectTexture(fish2Context, matrix * glm::translate(change2) * glm::rotate(glm::radians(30.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(1.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(1.0f), glm::vec3(0, 0, 1)), fish2Texture);
+			drawObjectTexture(fish2Context, matrix * glm::translate(change3) * glm::rotate(glm::radians(30.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(1.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(1.0f), glm::vec3(0, 0, 1)), fish2Texture);
+			drawObjectTexture(fish2Context, matrix * glm::translate(change4) * glm::rotate(glm::radians(30.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(1.0f), glm::vec3(0,1,0)) * glm::rotate(glm::radians(1.0f), glm::vec3(0, 0, 1)), fish2Texture);
 
 			matrix = animationMatrix(time + 15, keyPointsThirdShoal, keyRotationThirdShoal);
-			drawObjectTexture(fish3Context, matrix * glm::rotate(glm::radians(1.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)), fish3Texture);
+			drawObjectTexture(fish3Context, matrix * glm::translate(change1) * glm::rotate(glm::radians(1.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)), fish3Texture);
+			drawObjectTexture(fish3Context, matrix * glm::translate(change2) * glm::rotate(glm::radians(1.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)), fish3Texture);
+			drawObjectTexture(fish3Context, matrix * glm::translate(change3) * glm::rotate(glm::radians(1.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)), fish3Texture);
+			drawObjectTexture(fish3Context, matrix * glm::translate(change4) * glm::rotate(glm::radians(1.0f), glm::vec3(1, 0, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 0, 1)), fish3Texture);
 			time -= 3;
 		}
 	}
