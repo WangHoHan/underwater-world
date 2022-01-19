@@ -2,6 +2,7 @@
 #define WINDOW_HEIGHT 800
 #define STB_IMAGE_IMPLEMENTATION
 #define SKYBOX_PARAMETER 100.0f
+#define SKYBOX_BOUNDARY 99.0f
 
 #include "glew.h"
 #include "freeglut.h"
@@ -149,6 +150,11 @@ float skyboxVertices[] = {
 	 SKYBOX_PARAMETER, -SKYBOX_PARAMETER,  SKYBOX_PARAMETER
 };
 
+bool isInSkybox(glm::vec3 nextPosition) {
+	return nextPosition.z > -SKYBOX_BOUNDARY && nextPosition.z < SKYBOX_BOUNDARY && nextPosition.y > -SKYBOX_BOUNDARY &&
+		nextPosition.y < SKYBOX_BOUNDARY && nextPosition.x < SKYBOX_BOUNDARY && nextPosition.x > -SKYBOX_BOUNDARY;
+}
+
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -168,19 +174,27 @@ void keyboard(unsigned char key, int x, int y)
 	case 'x': cursorDiff.z += angleSpeed; break;
 	case 'w':
 		nextPosition = cameraPos + (cameraDir * moveSpeed);
-		cameraPos = nextPosition;
+		if (isInSkybox(nextPosition)) {
+			cameraPos = nextPosition;
+		}
 		break;
 	case 's':
 		nextPosition = cameraPos - (cameraDir * moveSpeed);
-		cameraPos = nextPosition;
+		if (isInSkybox(nextPosition)) {
+			cameraPos = nextPosition;
+		}
 		break;
 	case 'd':
 		nextPosition = cameraPos + (cameraSide * moveSpeed);
-		cameraPos = nextPosition;
+		if (isInSkybox(nextPosition)) {
+			cameraPos = nextPosition;
+		}
 		break;
 	case 'a':
 		nextPosition = cameraPos - (cameraSide * moveSpeed);
-		cameraPos = nextPosition;
+		if (isInSkybox(nextPosition)) {
+			cameraPos = nextPosition;
+		}
 		break;
 	}
 }
