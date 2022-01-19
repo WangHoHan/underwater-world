@@ -176,6 +176,7 @@ void keyboard(unsigned char key, int x, int y)
 		nextPosition = cameraPos + (cameraDir * moveSpeed);
 		if (isInSkybox(nextPosition)) {
 			cameraPos = nextPosition;
+			std::cout << cameraPos.x << " " << cameraPos.y << " " << cameraPos.z << std::endl;
 		}
 		break;
 	case 's':
@@ -417,19 +418,24 @@ void renderScene()
 		}
 	}
 
-	for (int i = 0; i < 250; i++) {
+	for (int i = 0; i < 500; i++) {
 		if (i % 3 == 0) {
-			drawObjectTexture(plantContext, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(0.2f)), plantTexture , plantNormal);
+			drawObjectTexture(plantContext, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(0.25f)), plantTexture , plantNormal);
 		} else if (i % 3 == 1) {
-			drawObjectTexture(plant2Context, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(1.0f)), plant2Texture, plant2Normal);
+			drawObjectTexture(plant2Context, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(1.2f)), plant2Texture, plant2Normal);
 		} else {
-			drawObjectTexture(plant3Context, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(1.0f)), plant3Texture, plant3Normal);
+			drawObjectTexture(plant3Context, glm::translate(plantsPositions[i]) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2.0f)), plant3Texture, plant3Normal);
 		}
 	}
 
 	drawObjectTexture(rockContext, glm::translate(glm::vec3(1.0f, -5.0f, 1.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2.0f)), rockTexture, rockNormal);
 	drawObjectTexture(rockContext, glm::translate(glm::vec3(60.0f, -5.0f, 1.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2.0f)), rockTexture, rockNormal);
 	drawObjectTexture(rockContext, glm::translate(glm::vec3(1.0f, -5.0f, 60.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(2.0f)), rockTexture, rockNormal);
+	drawObjectTexture(rockContext, glm::translate(glm::vec3(40.0f, -5.0f, -35.0f)) * glm::rotate(glm::radians(270.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(1.0f)), rockTexture, rockNormal);
+	drawObjectTexture(rockContext, glm::translate(glm::vec3(-80.0f, -5.0f, 70.0f)) * glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(1.5f)), rockTexture, rockNormal);
+	drawObjectTexture(rockContext, glm::translate(glm::vec3(90.0f, -5.0f, -10.0f)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(1.2137f)), rockTexture, rockNormal);
+	drawObjectTexture(rockContext, glm::translate(glm::vec3(-30.0f, -5.0f, -50.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(1.69f)), rockTexture, rockNormal);
+
 
 	glutSwapBuffers();
 }
@@ -560,8 +566,14 @@ void init()
 		bubblesPositions.push_back(glm::vec3(rand() % 200 - 100, rand() % 10, rand() % 200 - 100));
 	}
 
-	for (int i = 0; i < 1000; i++) {
-		plantsPositions.push_back(glm::vec3(rand() % 200 - 100, -3.65f, rand() % 200 - 100));
+	for (int i = 0; i < 500; i++) {
+		auto x = rand() % 200 - 100;
+		auto z = rand() % 200 - 100;
+		float y;
+		if (x > 35.0f && z > 50.0f) y = -10.0f;
+		else y = -3.65f;
+		std::cout << y << std::endl;
+		plantsPositions.push_back(glm::vec3(x, y, z));
 	}
 
 	loadModelToContext("models/GoldFish.obj", fishContext);
