@@ -536,8 +536,8 @@ void init()
 	normalStingray = Core::LoadTexture("textures/Ray_normal.png");
 
 	loadModelToContext("models/CalidiousDesert_obj.obj", terrainContext);
-	textureTerrain = Core::LoadTexture("textures/CalidiousDesert_diffuse.png");
-	normalTerrain = Core::LoadTexture("textures/CalidiousDesert_normal.png");
+	textureTerrain = Core::LoadTexture("textures/desert.jpg");
+	normalTerrain = Core::LoadTexture("textures/desert_normal.png");
 
 	loadModelToContext("models/Oceans day.obj", bubbleContext);
 ;
