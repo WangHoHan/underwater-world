@@ -176,7 +176,6 @@ void keyboard(unsigned char key, int x, int y)
 		nextPosition = cameraPos + (cameraDir * moveSpeed);
 		if (isInSkybox(nextPosition)) {
 			cameraPos = nextPosition;
-			std::cout << cameraPos.x << " " << cameraPos.y << " " << cameraPos.z << std::endl;
 		}
 		break;
 	case 's':
@@ -569,10 +568,17 @@ void init()
 	for (int i = 0; i < 500; i++) {
 		auto x = rand() % 200 - 100;
 		auto z = rand() % 200 - 100;
-		float y;
-		if (x > 35.0f && z > 50.0f) y = -10.0f;
-		else y = -3.65f;
-		std::cout << y << std::endl;
+		float y = -20.0f;
+		if (x >= -100.0f && x < 0.0f && z >= -100.0f && z <= -5.0f) {
+			y = -6.8f;
+		}
+		else if (x >= -100.0f && x < 0.0f) {
+			y = -3.7f;
+		}
+		else if (x >= 0.0f && x < 100.0f) {
+			y = -20.0f;
+		}
+
 		plantsPositions.push_back(glm::vec3(x, y, z));
 	}
 
