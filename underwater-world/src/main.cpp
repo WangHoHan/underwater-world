@@ -171,7 +171,6 @@ void keyboard(unsigned char key, int x, int y)
 	float angleSpeed = 10.f;
 	float moveSpeed = 0.1f;
 	glm::vec3 nextPosition;
-	//std::cout << cameraPos.x << " " << cameraPos.y << " " << cameraPos.z << std::endl;
 	if (modifier == GLUT_ACTIVE_SHIFT) {
 		moveSpeed = 0.4f;
 	}
@@ -606,8 +605,14 @@ void init()
 		else if (x >= -100.0f && x < 0.0f) {
 			y = -3.7f;
 		}
-		else if (x >= 0.0f && x < 100.0f) {
-			y = -20.0f;
+		else if (x >= 0.0f && x < 28.0f) {
+			y = -4.7f;
+		}
+		else if (x >= 23.0f && x < 60.0f) {
+			y = -5.6f;
+		}
+		else if (x >= 60.0f && x <= 100.0f) {
+			y = -7.3f;
 		}
 
 		plantsPositions.push_back(glm::vec3(x, y, z));
