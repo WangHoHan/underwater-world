@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Particles.cpp" />
     <ClCompile Include="src\Render_Utils.cpp" />
     <ClCompile Include="src\Shader_Loader.cpp" />
     <ClCompile Include="src\SOIL\image_DXT.c" />
@@ -155,6 +156,7 @@
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\objload.h" />
+    <ClInclude Include="src\Particles.h" />
     <ClInclude Include="src\Render_Utils.h" />
     <ClInclude Include="src\Shader_Loader.h" />
     <ClInclude Include="src\SOIL\image_DXT.h" />
@@ -177,6 +179,8 @@
     <None Include="PhysXFoundation_32.dll" />
     <None Include="PhysXGpu_32.dll" />
     <None Include="PhysX_32.dll" />
+    <None Include="shaders\particles.frag" />
+    <None Include="shaders\particles.vert" />
     <None Include="shaders\shader_color.frag" />
     <None Include="shaders\shader_color.vert" />
     <None Include="shaders\shader_tex.frag" />

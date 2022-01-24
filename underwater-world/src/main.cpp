@@ -18,9 +18,15 @@
 #include "Render_Utils.h"
 #include "Texture.h"
 #include "Camera.h"
+#include "Particles.h"
 #include "SOIL/stb_image_aug.h"
 
-GLuint skyboxProgram, skyboxBuffer, terrainProgram, bubbleProgram, programColor, programTexture, programTexture2, textureStingray, textureTerrain, textureBubble, fishTexture, fish2Texture, fish3Texture, plantTexture, plant2Texture, plant3Texture, rockTexture , normalTerrain, plantNormal, plant2Normal, plant3Normal, normalStingray, fishNormal, fish2Normal, fish3Normal, rockNormal;
+GLuint skyboxProgram, skyboxBuffer;
+GLuint terrainProgram, bubbleProgram, programColor, programTexture, programTexture2, textureStingray;
+GLuint textureTerrain, textureBubble, fishTexture, fish2Texture, fish3Texture, plantTexture, plant2Texture, plant3Texture;
+GLuint rockTexture, normalTerrain, plantNormal, plant2Normal, plant3Normal, normalStingray, fishNormal, fish2Normal, fish3Normal, rockNormal;
+GLuint depthTerrain, depthStingRay;
+GLuint programParticles;
 
 unsigned int cubemapTexture, skyboxVAO;
 
@@ -104,7 +110,7 @@ std::vector<glm::vec3> keyPointsThirdShoal({
 	});
 
 std::vector<glm::quat> keyRotationThirdShoal;
-
+glm::vec3 cameraVertical;
 
 float skyboxVertices[] = {
 	-SKYBOX_PARAMETER,  SKYBOX_PARAMETER, -SKYBOX_PARAMETER,
@@ -150,11 +156,12 @@ float skyboxVertices[] = {
 	 SKYBOX_PARAMETER, -SKYBOX_PARAMETER,  SKYBOX_PARAMETER
 };
 
+float heightScale = 1.0f;
+
 bool isInSkybox(glm::vec3 nextPosition) {
 	return nextPosition.z > -SKYBOX_BOUNDARY && nextPosition.z < SKYBOX_BOUNDARY && nextPosition.y > -SKYBOX_BOUNDARY &&
 		nextPosition.y < SKYBOX_BOUNDARY && nextPosition.x < SKYBOX_BOUNDARY && nextPosition.x > -SKYBOX_BOUNDARY;
 }
-
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -164,14 +171,18 @@ void keyboard(unsigned char key, int x, int y)
 	float angleSpeed = 10.f;
 	float moveSpeed = 0.1f;
 	glm::vec3 nextPosition;
-
+	std::cout << cameraPos.x << " " << cameraPos.y << " " << cameraPos.z << std::endl;
 	if (modifier == GLUT_ACTIVE_SHIFT) {
 		moveSpeed = 0.4f;
 	}
 	switch (key)
 	{
-	case 'z': cursorDiff.z -= angleSpeed; break;
-	case 'x': cursorDiff.z += angleSpeed; break;
+	case 'z':
+		cursorDiff.z -= angleSpeed; 
+		break;
+	case 'x':
+		cursorDiff.z += angleSpeed;
+		break;
 	case 'w':
 		nextPosition = cameraPos + (cameraDir * moveSpeed);
 		if (isInSkybox(nextPosition)) {
@@ -196,6 +207,8 @@ void keyboard(unsigned char key, int x, int y)
 			cameraPos = nextPosition;
 		}
 		break;
+	case 'q': cameraPos += cameraVertical * moveSpeed; break;
+	case 'e': cameraPos -= cameraVertical * moveSpeed; break;
 	}
 }
 
@@ -226,6 +239,8 @@ glm::mat4 createCameraMatrix()
 	cameraDir = glm::inverse(rotation) * glm::vec3(0, 0, -1);
 	cameraSide = glm::inverse(rotation) * glm::vec3(1, 0, 0);
 
+	cameraVertical = inverse(rotation) * glm::vec3(0, 1, 0);
+
 	return Core::createViewMatrixQuat(cameraPos, rotation);
 }
 
@@ -249,7 +264,7 @@ void drawObjectColor(Core::RenderContext context, glm::mat4 modelMatrix, glm::ve
 }
 
 
-void drawObjectTexture(Core::RenderContext context, glm::mat4 modelMatrix, GLuint textureId, GLuint normalId = -1)
+void drawObjectTexture(Core::RenderContext context, glm::mat4 modelMatrix, GLuint textureId, GLuint normalId = -1, GLuint heightMapId = -1)
 {
 	GLuint program = programTexture;
 
@@ -261,9 +276,18 @@ void drawObjectTexture(Core::RenderContext context, glm::mat4 modelMatrix, GLuin
 		Core::SetActiveTexture(normalId, "normalSampler", program, 1);
 	}
 
+	if (heightMapId != -1) {
+		Core::SetActiveTexture(heightMapId, "depthMap", program, 2);
+		glUniform1i(glGetUniformLocation(program, "isParallax"), 1);
+	} else {
+		glUniform1i(glGetUniformLocation(program, "isParallax"), 0);
+	}
+
 	glm::mat4 transformation = perspectiveMatrix * cameraMatrix * modelMatrix;
 	glUniformMatrix4fv(glGetUniformLocation(program, "modelViewProjectionMatrix"), 1, GL_FALSE, (float*)&transformation);
 	glUniformMatrix4fv(glGetUniformLocation(program, "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
+
+	//glUniform1f(glGetUniformLocation(program, "height_scale"), heightScale);
 
 	Core::DrawContext(context);
 
@@ -372,8 +396,10 @@ void renderScene()
 	glm::mat4 stingrayInitialTransformation = glm::translate(glm::vec3(0, -0.5, -0.4)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(0.25f));
 	glm::mat4 stingrayModelMatrix = glm::translate(cameraPos + cameraDir) * glm::mat4_cast(glm::inverse(rotation)) * stingrayInitialTransformation;
 	
-	drawObjectTexture(stingrayContext, stingrayModelMatrix, textureStingray, normalStingray);
-	drawObjectTexture(terrainContext, glm::translate(glm::vec3(0, 130, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(850.25f)), textureTerrain, normalTerrain);
+	//Core::DrawVertexArrayIndexed(V, ind, 6, 4);
+
+	drawObjectTexture(stingrayContext, stingrayModelMatrix, textureStingray, normalStingray, depthStingRay);
+	drawObjectTexture(terrainContext, glm::translate(glm::vec3(0, 130, 0)) * glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(850.25f)), textureTerrain, normalTerrain , depthTerrain);
 	
 	glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
@@ -435,7 +461,8 @@ void renderScene()
 	drawObjectTexture(rockContext, glm::translate(glm::vec3(90.0f, -5.0f, -10.0f)) * glm::rotate(glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(1.2137f)), rockTexture, rockNormal);
 	drawObjectTexture(rockContext, glm::translate(glm::vec3(-30.0f, -5.0f, -50.0f)) * glm::rotate(glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::vec3(1.69f)), rockTexture, rockNormal);
 
-
+	handleAllParticleSources(cameraPos, programParticles, cameraSide, cameraVertical, cameraMatrix, perspectiveMatrix);
+	glUseProgram(0);
 	glutSwapBuffers();
 }
 
@@ -546,6 +573,8 @@ void init()
 	programTexture = shaderLoader.CreateProgram((char*) "shaders/shader_tex.vert", (char*) "shaders/shader_tex.frag");
 	programTexture2 = shaderLoader.CreateProgram((char*) "shaders/shader_tex_2.vert", (char*) "shaders/shader_tex_2.frag");
 	skyboxProgram = shaderLoader.CreateProgram((char *) "shaders/skybox.vert", (char *) "shaders/skybox.frag");
+	programParticles = shaderLoader.CreateProgram((char*) "shaders/particles.vert", (char*) "shaders/particles.frag");
+
 
     loadCubemap();
 	initSkybox();
@@ -553,10 +582,12 @@ void init()
 	loadModelToContext("models/Ray.obj", stingrayContext);
 	textureStingray = Core::LoadTexture("textures/Ray.png");
 	normalStingray = Core::LoadTexture("textures/Ray_normal.png");
+	depthStingRay = Core::LoadTexture("textures/Ray_height.png");
 
 	loadModelToContext("models/CalidiousDesert_obj.obj", terrainContext);
 	textureTerrain = Core::LoadTexture("textures/desert.jpg");
 	normalTerrain = Core::LoadTexture("textures/desert_normal.png");
+	depthTerrain = Core::LoadTexture("textures/desert_height.jpg");
 
 	loadModelToContext("models/Oceans day.obj", bubbleContext);
 ;
@@ -613,6 +644,13 @@ void init()
 	initKeyRotation(keyPointsFirstShoal, keyRotationFirstShoal);
 	initKeyRotation(keyPointsSecondShoal, keyRotationSecondShoal);
 	initKeyRotation(keyPointsThirdShoal, keyRotationThirdShoal);
+
+	initParticles();
+	addParticleSource(glm::vec3(1, 1, 1), 12.0f, 1.5f);
+	addParticleSource(glm::vec3(-1.6, 0, 1.6), 180.0f, 0.3f);
+	addParticleSource(glm::vec3(0, 0, 0), 100.0f, 1.5f);
+	addParticleSource(glm::vec3(0, 0, -3), 100.0f, 1.5f);
+	addParticleSource(glm::vec3(2, 0, -1), 100.0f, 1.5f);
 }
 
 void shutdown()
@@ -623,6 +661,8 @@ void shutdown()
 	shaderLoader.DeleteProgram(skyboxProgram);
 	shaderLoader.DeleteProgram(terrainProgram);
 	shaderLoader.DeleteProgram(bubbleProgram);
+	shaderLoader.DeleteProgram(programParticles);
+	shutdownParticles();
 }
 
 void idle()
