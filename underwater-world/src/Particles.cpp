@@ -412,7 +412,7 @@ void handleAllParticleSources(glm::vec3 cameraPos, GLuint programParticles, glm:
 	//std::cout << particleSources.size() << std::endl;
 	for (ParticleSource particleSource : particleSources)
 	{
-		std::cout << particleSource.pos.x << " " <<  particleSource.pos.y << "" << particleSource.pos.z << "" << std::endl;
+		//std::cout << particleSource.pos.x << " " <<  particleSource.pos.y << "" << particleSource.pos.z << "" << std::endl;
 		spawnParticles(delta, particleSource.pos, particleSource.amount, particleSource.spread);
 	}
 

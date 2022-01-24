@@ -171,7 +171,7 @@ void keyboard(unsigned char key, int x, int y)
 	float angleSpeed = 10.f;
 	float moveSpeed = 0.1f;
 	glm::vec3 nextPosition;
-	std::cout << cameraPos.x << " " << cameraPos.y << " " << cameraPos.z << std::endl;
+	//std::cout << cameraPos.x << " " << cameraPos.y << " " << cameraPos.z << std::endl;
 	if (modifier == GLUT_ACTIVE_SHIFT) {
 		moveSpeed = 0.4f;
 	}

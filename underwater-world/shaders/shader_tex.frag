@@ -3,7 +3,6 @@
 uniform sampler2D textureSampler;
 uniform sampler2D normalSampler;
 uniform sampler2D depthMap;
-//uniform vec3 lightDir;
 
 in vec3 interpNormal;
 in vec2 interpTexCoord;
@@ -33,16 +32,15 @@ float logisticDepth(float depth, float steepness, float offset)
 
 void main()
 {
-	//vec3 lightDir = normalize(lightDirTS);
-	//vec3 V = normalize(viewDirTS);
-	//vec3 normal = normalize(vec3(texture2D(normalSampler, interpTexCoord)) * 2 - 1);
-	//vec3 R = reflect(-normalize(lightDir),normal);
 
+	// uncomment to use Parralax Mapping
 	//texCoords = ParallaxMapping(interpTexCoord,  viewDir);
 	//if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
 	//	discard;
 
+	// comment to use Parralax Mapping
 	texCoords = interpTexCoord;
+	
 	vec3 lightDir = normalize(lightDirTS);
 	vec3 V = normalize(viewDirTS);
 	vec3 normal = normalize(vec3(texture2D(normalSampler, texCoords)) * 2 - 1);
@@ -51,11 +49,9 @@ void main()
 	float depth = logisticDepth(gl_FragCoord.z, 0.1f, 3.0f);
 	vec2 modifiedTexCoord = vec2(texCoords.x, 1.0 - texCoords.y); // Poprawka dla tekstur Ziemi, ktore bez tego wyswietlaja sie 'do gory nogami'
 	vec3 color = texture2D(textureSampler, modifiedTexCoord).rgb;
-	//vec3 normal = normalize(interpNormal);
 	float ambient = 0.2;
 	float diffuse = max(dot(normal, -lightDir), 0.1);
 	gl_FragColor = vec4(color * (ambient + (1-ambient) * diffuse * 0.6 ), 1.0) * (1.0f - depth) + vec4(depth * vec3(0.0f, 0.109f, 0.447f), 1.0f);;
-	//gl_FragColor = vec4(color * (ambient + (1-ambient) * diffuse * 0.6 ), 1.0) * (1.0f - depth) + vec4(depth * vec3(0.219f, 0.407f, 0.705f), 1.0f);;
 }
 
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
