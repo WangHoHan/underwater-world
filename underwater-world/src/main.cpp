@@ -174,6 +174,7 @@ void keyboard(unsigned char key, int x, int y)
 	if (modifier == GLUT_ACTIVE_SHIFT) {
 		moveSpeed = 0.4f;
 	}
+	//std::cout << cameraPos.x << " " << cameraPos.y << " " << cameraPos.z << std::endl;
 	switch (key)
 	{
 	case 'z':
@@ -601,18 +602,25 @@ void init()
 		float y = -20.0f;
 		if (x >= -100.0f && x < 0.0f && z >= -100.0f && z <= -5.0f) {
 			y = -6.8f;
-		}
-		else if (x >= -100.0f && x < 0.0f) {
+
+		} else if (x> 10.0f && z < -30.0f) {
+			y = 0.0f;
+
+		} else if (x < 11.0f && z > 4.0f) {
+			y = 0.0f;
+
+		} else if (x >= -100.0f && x < 0.0f) {
 			y = -3.7f;
-		}
-		else if (x >= 0.0f && x < 28.0f) {
+
+		} else if (x >= 0.0f && x < 28.0f) {
 			y = -4.7f;
-		}
-		else if (x >= 23.0f && x < 60.0f) {
+
+		} else if (x >= 23.0f && x < 60.0f) {
 			y = -5.6f;
-		}
-		else if (x >= 60.0f && x <= 100.0f) {
+
+		} else if (x >= 60.0f && x <= 100.0f) {
 			y = -7.3f;
+
 		}
 
 		plantsPositions.push_back(glm::vec3(x, y, z));
