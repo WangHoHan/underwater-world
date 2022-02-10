@@ -664,6 +664,13 @@ void init()
 	addParticleSource(glm::vec3(0, 0, 0), 100.0f, 1.5f);
 	addParticleSource(glm::vec3(0, 0, -3), 100.0f, 1.5f);
 	addParticleSource(glm::vec3(2, 0, -1), 100.0f, 1.5f);
+	addParticleSource(glm::vec3(1.0f, -5.0f, 1.0f), 180.0f, 1.5f);
+	addParticleSource(glm::vec3(60.0f, -5.0f, 1.0f), 180.0f, 1.5f);
+	addParticleSource(glm::vec3(1.0f, -5.0f, 60.0f), 180.0f, 1.5f);
+	addParticleSource(glm::vec3(40.0f, -5.0f, -35.0f), 180.0f, 1.5f);
+	addParticleSource(glm::vec3(-80.0f, -5.0f, 70.0f), 180.0f, 1.5f);
+	addParticleSource(glm::vec3(90.0f, -5.0f, -10.0f), 180.0f, 1.5f);
+	addParticleSource(glm::vec3(-30.0f, -5.0f, -50.0f), 180.0f, 1.5f);
 }
 
 void shutdown()
